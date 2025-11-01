@@ -82,7 +82,7 @@ const MyAnimalsPage: React.FC = () => {
       // Pro běžné uživatele: filtrujeme jen jeho zvířata
       let filteredAnimals = allAnimals;
       if (user && user.role !== 'admin') {
-        filteredAnimals = allAnimals.filter(animal => animal.ownerId === user.id);
+        filteredAnimals = allAnimals.filter((animal: Animal) => animal.ownerId === user.id);
         console.log(`Filtered ${allAnimals.length} animals to ${filteredAnimals.length} for user ${user.id}`);
       }
       
