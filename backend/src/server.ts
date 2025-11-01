@@ -104,15 +104,21 @@ const startServer = async () => {
     await sequelize.sync({ force: false });
     console.log('Database synchronized successfully.');
     
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    // Only start HTTP server if not in serverless environment
+    if (process.env.VERCEL !== '1') {
+      app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+      });
+    }
   } catch (error) {
     console.error('Unable to start server:', error);
-    process.exit(1);
+    if (process.env.VERCEL !== '1') {
+      process.exit(1);
+    }
   }
 };
 
+// Initialize database connection
 startServer();
 
 export default app;
