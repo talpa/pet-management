@@ -1,0 +1,90 @@
+# Backend ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: pet-management
+data:
+  NODE_ENV: "production"
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "fullstack_db"
+  DB_USER: "postgres"
+  JWT_SECRET: "your-jwt-secret-change-this"
+  API_URL: "https://your-backend-url.com"
+  CORS_ORIGIN: "https://your-frontend-url.com"
+---
+# Backend Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secret
+  namespace: pet-management
+type: Opaque
+data:
+  # Base64 encoded values - change these!
+  DB_PASSWORD: cGV0bWFuYWdlbWVudDEyMw==  # petmanagement123
+  GOOGLE_CLIENT_ID: ""
+  GOOGLE_CLIENT_SECRET: ""
+  FACEBOOK_APP_ID: ""
+  FACEBOOK_APP_SECRET: ""
+---
+# Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: pet-management
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: us-ashburn-1.ocir.io/your-tenancy/pet-backend:latest
+        ports:
+        - containerPort: 4444
+        envFrom:
+        - configMapRef:
+            name: backend-config
+        - secretRef:
+            name: backend-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4444
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4444
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+# Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: pet-management
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 80
+      targetPort: 4444
+  type: ClusterIP

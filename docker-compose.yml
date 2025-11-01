@@ -1,0 +1,84 @@
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: fullstack_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fullstack_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fullstack_network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fullstack_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 4444
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: fullstack_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - fullstack_network
+    command: npm run dev
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fullstack_frontend
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:4444/api
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+      WDS_SOCKET_PORT: 8080
+      HOST: 0.0.0.0
+      GENERATE_SOURCEMAP: false
+      TSC_COMPILE_ON_ERROR: true
+      ESLINT_NO_DEV_ERRORS: true
+    ports:
+      - "8080:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - fullstack_network
+    command: npm start
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+volumes:
+  postgres_data:
+
+networks:
+  fullstack_network:
+    driver: bridge

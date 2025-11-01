@@ -1,0 +1,275 @@
+{
+  "common": {
+    "loading": "Načítání...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "edit": "Upravit",
+    "delete": "Smazat",
+    "confirm": "Potvrdit",
+    "close": "Zavřít",
+    "search": "Hledat",
+    "filter": "Filtrovat",
+    "reset": "Resetovat",
+    "back": "Zpět",
+    "next": "Další",
+    "previous": "Předchozí",
+    "home": "Domů",
+    "logout": "Odhlásit se",
+    "login": "Přihlásit se",
+    "create": "Vytvořit",
+    "update": "Aktualizovat",
+    "view": "Zobrazit",
+    "yes": "Ano",
+    "no": "Ne"
+  },
+  "auth": {
+    "title": "Přihlášení",
+    "subtitle": "Vyberte způsob přihlášení",
+    "loginTab": "Přihlášení",
+    "registerTab": "Registrace",
+    "email": "E-mail",
+    "password": "Heslo",
+    "name": "Jméno",
+    "confirmPassword": "Potvrdit heslo",
+    "loginButton": "Přihlásit se",
+    "registerButton": "Registrovat se",
+    "googleLogin": "Přihlásit se pomocí Google",
+    "facebookLogin": "Přihlásit se pomocí Facebook",
+    "loginSuccess": "Přihlášení úspěšné",
+    "registerSuccess": "Registrace úspěšná! Můžete se nyní přihlásit.",
+    "errors": {
+      "emailRequired": "E-mail je povinný",
+      "emailInvalid": "Neplatný e-mail formát",
+      "passwordRequired": "Heslo je povinné",
+      "passwordTooShort": "Heslo musí mít alespoň 6 znaků",
+      "nameRequired": "Jméno je povinné",
+      "passwordMismatch": "Hesla se neshodují",
+      "invalidCredentials": "Neplatný email nebo heslo",
+      "userExists": "Uživatel s tímto emailem již existuje",
+      "accountInactive": "Účet není aktivní",
+      "oauthAccount": "Tento účet je registrován přes sociální sítě. Použijte přihlášení přes Google nebo Facebook."
+    },
+    "vscodeInfo": {
+      "title": "VS Code Simple Browser:",
+      "description": "Pro plné OAuth přihlášení otevřete aplikaci v hlavním prohlížeči:",
+            "url": "http://localhost:8080"
+    },
+    "termsText": "Pokračováním souhlasíte s našimi podmínkami použití"
+  },
+  "navigation": {
+    "userManagement": "Správa uživatelů",
+    "permissions": "Oprávnění",
+    "groups": "Skupiny",
+    "memberships": "Členství",
+    "oauthPermissions": "OAuth Oprávnění",
+    "oauthTest": "OAuth Test",
+    "oauthDebug": "OAuth Debug",
+    "animalSpecies": "Druhy zvířat",
+    "animals": "Zvířata"
+  },
+  "userManagement": {
+    "title": "Správa uživatelů",
+    "addUser": "Přidat uživatele",
+    "editUser": "Upravit uživatele",
+    "deleteUser": "Smazat uživatele",
+    "columns": {
+      "id": "ID",
+      "name": "Jméno",
+      "email": "E-mail",
+      "role": "Role",
+      "status": "Stav",
+      "provider": "Poskytovatel",
+      "createdAt": "Vytvořeno",
+      "actions": "Akce"
+    },
+    "status": {
+      "active": "Aktivní",
+      "inactive": "Neaktivní",
+      "pending": "Čekající"
+    },
+    "provider": {
+      "local": "Lokální",
+      "google": "Google",
+      "facebook": "Facebook"
+    },
+    "role": {
+      "admin": "Administrátor",
+      "user": "Uživatel",
+      "moderator": "Moderátor"
+    }
+  },
+  "oauth": {
+    "testTitle": "OAuth Test (Přímé přesměrování)",
+    "testSubtitle": "Test OAuth přihlášení bez popup oken",
+    "debugMode": "Debug Mode:",
+    "debugDescription": "Tento test používá přímé přesměrování místo popup oken.",
+    "testGoogleDirect": "Test Google OAuth (Přímé)",
+    "testFacebookDirect": "Test Facebook OAuth (Přímé)",
+    "debugInfo": "Debug Info:",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "googleUrl": "Google URL",
+    "facebookUrl": "Facebook URL",
+    "loginSuccessful": "Přihlášení úspěšné!",
+    "windowCloseAuto": "Toto okno se automaticky zavře...",
+    "windowCloseManual": "Zavřít okno ručně",
+    "loginError": "Chyba přihlášení"
+  },
+  "animalSpecies": {
+    "title": "Správa druhů zvířat",
+    "addNew": "Přidat nový druh",
+    "createTitle": "Vytvořit nový druh zvířete",
+    "editTitle": "Upravit druh zvířete",
+    "deleteTitle": "Smazat druh zvířete",
+    "deleteConfirmation": "Opravdu chcete smazat tento druh zvířete? Tato akce je nevratná.",
+    "propertiesCount": "{{count}} vlastností",
+    "noProperties": "Žádné vlastnosti nejsou definovány",
+    "form": {
+      "name": "Název druhu",
+      "category": "Kategorie",
+      "description": "Popis",
+      "newCategory": "Nová kategorie",
+      "newCategoryName": "Název nové kategorie",
+      "properties": "Vlastnosti",
+      "addProperty": "Přidat vlastnost",
+      "propertyName": "Název vlastnosti",
+      "propertyType": "Typ vlastnosti",
+      "defaultValue": "Výchozí hodnota",
+      "required": "Povinné",
+      "selectOptions": "Možnosti výběru",
+      "selectOptionsPlaceholder": "možnost1, možnost2, možnost3",
+      "selectOptionsHelp": "Oddělte možnosti čárkami"
+    },
+    "propertyTypes": {
+      "text": "Text",
+      "number": "Číslo",
+      "boolean": "Ano/Ne",
+      "date": "Datum",
+      "select": "Výběr ze seznamu"
+    },
+    "messages": {
+      "createSuccess": "Druh zvířete byl úspěšně vytvořen",
+      "updateSuccess": "Druh zvířete byl úspěšně aktualizován",
+      "deleteSuccess": "Druh zvířete byl úspěšně smazán"
+    },
+    "errors": {
+      "loadFailed": "Načítání druhů zvířat selhalo",
+      "saveFailed": "Uložení druhu zvířete selhalo",
+      "deleteFailed": "Smazání druhu zvířete selhalo"
+    }
+  },
+  "animals": {
+    "title": "Správa zvířat",
+    "addNew": "Přidat nové zvíře",
+    "createTitle": "Zaregistrovat nové zvíře",
+    "editTitle": "Upravit zvíře",
+    "deleteTitle": "Smazat zvíře",
+    "deleteConfirmation": "Opravdu chcete smazat toto zvíře? Tato akce je nevratná.",
+    "searchPlaceholder": "Hledat zvířata podle jména...",
+    "filterBySpecies": "Filtrovat podle druhu",
+    "allSpecies": "Všechny druhy",
+    "owner": "Majitel",
+    "birthDate": "Datum narození",
+    "propertiesCount": "{{count}} vlastností",
+    "tabs": {
+      "basic": "Základní informace",
+      "seo": "SEO URL",
+      "images": "Obrázky",
+      "qrCode": "QR Kód"
+    },
+    "form": {
+      "name": "Jméno zvířete",
+      "species": "Druh zvířete",
+      "birthDate": "Datum narození",
+      "description": "Popis",
+      "speciesProperties": "Vlastnosti druhu"
+    },
+    "messages": {
+      "createSuccess": "Zvíře bylo úspěšně zaregistrováno",
+      "updateSuccess": "Zvíře bylo úspěšně aktualizováno",
+      "deleteSuccess": "Zvíře bylo úspěšně smazáno"
+    },
+    "errors": {
+      "loadFailed": "Načítání zvířat selhalo",
+      "saveFailed": "Uložení zvířete selhalo",
+      "deleteFailed": "Smazání zvířete selhalo"
+    }
+  },
+  "imageUpload": {
+    "title": "Správa obrázků",
+    "dropZone": {
+      "title": "Přetáhněte obrázky sem",
+      "subtitle": "nebo klikněte pro výběr souborů. Maximum {{max}} souborů, každý do {{size}} MB."
+    },
+    "selectFiles": "Vybrat soubory",
+    "imagesCount": "{{count}} z {{max}} obrázků",
+    "uploading": "Nahrávání...",
+    "upload": "Nahrát",
+    "primary": "Hlavní",
+    "isPrimary": "Hlavní obrázek",
+    "setPrimary": "Nastavit jako hlavní",
+    "viewLarge": "Zobrazit ve velkém",
+    "remove": "Odstranit",
+    "fileSize": "Velikost souboru",
+    "errors": {
+      "tooManyFiles": "Příliš mnoho souborů. Maximum je {{max}}.",
+      "invalidType": "Soubor {{name}} není obrázek.",
+      "fileTooLarge": "Soubor {{name}} je příliš velký. Maximum je {{max}} MB.",
+      "uploadFailed": "Nahrávání selhalo",
+      "deleteFailed": "Smazání obrázku selhalo",
+      "setPrimaryFailed": "Nastavení hlavního obrázku selhalo",
+      "uploadFirst": "Nejdříve nahrajte obrázek"
+    }
+  },
+  "seoUrl": {
+    "title": "SEO URL",
+    "placeholder": "zvire-jmeno",
+    "helpText": "URL adresa pro sdílení profilu zvířete. Pouze malá písmena, čísla a pomlčky.",
+    "available": "URL je dostupná",
+    "fullUrl": "Plná URL",
+    "copyUrl": "Kopírovat URL",
+    "getSuggestions": "Získat návrhy",
+    "suggestions": "Návrhy",
+    "errors": {
+      "required": "SEO URL je povinná",
+      "tooShort": "URL musí mít alespoň 3 znaky",
+      "tooLong": "URL může mít nejvýše 100 znaků",
+      "invalidFormat": "Pouze malá písmena, čísla a pomlčky jsou povoleny",
+      "invalidHyphens": "URL nesmí začínat nebo končit pomlčkou",
+      "doubleHyphens": "URL nesmí obsahovat dvojité pomlčky",
+      "notAvailable": "Tato URL už je používána",
+      "checkFailed": "Kontrola dostupnosti URL selhala",
+      "suggestionFailed": "Získání návrhů selhalo"
+    }
+  },
+  "qrCode": {
+    "title": "QR Kód",
+    "seoUrlRequired": "SEO URL je vyžadována",
+    "seoUrlRequiredDescription": "Pro generování QR kódu je nejdříve potřeba nastavit SEO URL.",
+    "setSeoUrl": "Nastavit SEO URL",
+    "customize": "Přizpůsobit",
+    "customizeTitle": "Přizpůsobit QR kód",
+    "format": "Formát",
+    "size": "Velikost",
+    "customText": "Vlastní text",
+    "customTextPlaceholder": "Zadejte vlastní text...",
+    "customTextHelp": "Text, který se zobrazí pod QR kódem při tisku",
+    "generate": "Generovat",
+    "regenerate": "Znovu generovat",
+    "actions": "Akce",
+    "download": "Stáhnout",
+    "share": "Sdílet",
+    "print": "Tisknout",
+    "shareableUrl": "URL pro sdílení",
+    "shareTitle": "QR kód pro {{name}}",
+    "shareText": "Podívejte se na profil {{name}}",
+    "printTitle": "QR kód - {{name}}",
+    "scanToView": "Naskenujte QR kód pro zobrazení profilu",
+    "errors": {
+      "generateFailed": "Generování QR kódu selhalo",
+      "downloadFailed": "Stažení QR kódu selhalo"
+    }
+  }
+}

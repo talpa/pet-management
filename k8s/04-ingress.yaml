@@ -1,0 +1,68 @@
+# Ingress pro vystavení aplikace na internet
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pet-management-ingress
+  namespace: pet-management
+  annotations:
+    kubernetes.io/ingress.class: "oci-load-balancer"
+    oci.oraclecloud.com/load-balancer-type: "lb"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - your-domain.com
+    - api.your-domain.com
+    secretName: pet-management-tls
+  rules:
+  - host: your-domain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+  - host: api.your-domain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 80
+---
+# Alternativně - LoadBalancer služby bez custom domény
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-loadbalancer
+  namespace: pet-management
+  annotations:
+    oci.oraclecloud.com/load-balancer-type: "lb"
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-loadbalancer
+  namespace: pet-management
+  annotations:
+    oci.oraclecloud.com/load-balancer-type: "lb"
+spec:
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - port: 80
+      targetPort: 4444
