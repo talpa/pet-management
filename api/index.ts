@@ -6,10 +6,10 @@ let app: any = null;
 async function getApp() {
   if (!app) {
     // Import and initialize the Express app
-    const { default: expressApp } = await import('../src/server');
+    const { default: expressApp } = await import('../backend/src/server');
     
     // Initialize database connection for serverless
-    const { sequelize } = await import('../src/config/database');
+    const { sequelize } = await import('../backend/src/config/database');
     
     try {
       await sequelize.authenticate();
