@@ -18,6 +18,7 @@ import animalRoutes from './routes/animals';
 import animalSpeciesRoutes from './routes/animalSpecies';
 import tagRoutes from './routes/tagRoutes';
 import adminRoutes from './routes/adminRoutes';
+import debugRoutes from './routes/debugRoutes';
 import { errorHandler } from './middleware/errorHandler';
 
 // Load environment variables
@@ -73,6 +74,7 @@ app.use(passport.session());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
+app.use('/api/debug', debugRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
