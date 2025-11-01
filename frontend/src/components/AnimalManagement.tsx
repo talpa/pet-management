@@ -385,6 +385,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       description: '',
       seoUrl: '',
       properties: {},
+      tags: [],
     });
     setEditingAnimal(null);
     setSelectedSpecies(null);
