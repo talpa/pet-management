@@ -22,7 +22,8 @@
     "update": "Update",
     "view": "View",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "admin": "Administration"
   },
   "auth": {
     "title": "Sign In",
@@ -63,9 +64,6 @@
     "permissions": "Permissions",
     "groups": "Groups",
     "memberships": "Memberships",
-    "oauthPermissions": "OAuth Permissions",
-    "oauthTest": "OAuth Test",
-    "oauthDebug": "OAuth Debug",
     "animalSpecies": "Animal Species",
     "animals": "Animals"
   },
@@ -98,24 +96,17 @@
       "admin": "Administrator",
       "user": "User",
       "moderator": "Moderator"
+    },
+    "changePassword": {
+      "title": "Change User Password",
+      "description": "Enter a new password for the user. Password must be at least 6 characters long.",
+      "newPassword": "New Password",
+      "button": "Change Password",
+      "cancel": "Cancel",
+      "success": "Password changed successfully",
+      "error": "Error changing password",
+      "tooltip": "Change Password"
     }
-  },
-  "oauth": {
-    "testTitle": "OAuth Test (Direct Redirect)",
-    "testSubtitle": "Test OAuth authentication without popup windows",
-    "debugMode": "Debug Mode:",
-    "debugDescription": "This test uses direct redirect instead of popup windows.",
-    "testGoogleDirect": "Test Google OAuth (Direct)",
-    "testFacebookDirect": "Test Facebook OAuth (Direct)",
-    "debugInfo": "Debug Info:",
-    "frontend": "Frontend",
-    "backend": "Backend",
-    "googleUrl": "Google URL",
-    "facebookUrl": "Facebook URL",
-    "loginSuccessful": "Login Successful!",
-    "windowCloseAuto": "This window will close automatically...",
-    "windowCloseManual": "Close window manually",
-    "loginError": "Login Error"
   },
   "animalSpecies": {
     "title": "Animal Species Management",
@@ -271,5 +262,107 @@
       "generateFailed": "QR code generation failed",
       "downloadFailed": "QR code download failed"
     }
+  },
+  "home": {
+    "title": "Pet Management System",
+    "welcomeTitle": "Welcome to Pet Management System",
+    "welcomeSubtitle": "Professional pet management solution",
+    "searchPlaceholder": "Search for an animal by name, description or owner...",
+    "filterBySpecies": "Animal Species",
+    "filterByTags": "Filter by Tags",
+    "allSpecies": "All Species",
+    "showFilters": "Show Filters",
+    "hideFilters": "Hide Filters",
+    "clearFilters": "Clear All",
+    "clearAllFilters": "Clear filters and show all",
+    "filteringAndSearch": "Filtering and Search",
+    "activeFilters": "Active filters:",
+    "activeFiltersCount": "{{count}} active filters",
+    "searchLabel": "Search:",
+    "speciesLabel": "Species:",
+    "tagsLabel": "Tags:",
+    "recentAnimalsTitle": "🏆 Recently Added Animals",
+    "searchResultsTitle": "🔍 Search Results",
+    "recentAnimalsSubtitle": "Latest additions to our system",
+    "searchResultsCount": "Found {{count}} {{countText}} matching your criteria",
+    "animalSingular": "animal",
+    "animalPlural": "animals",
+    "animalGenitive": "animals",
+    "noAnimalsFound": "No animals match the specified criteria",
+    "noAnimalsYet": "No animals have been added yet",
+    "loadingAnimals": "Loading animals...",
+    "errorLoadingAnimals": "Failed to load animals",
+    "viewProfile": "View Profile",
+    "footer": "© 2025 Pet Management System",
+    "addedOn": "Added:",
+    "clickForDetail": "Click for details",
+    "unknownDate": "Unknown date",
+    "invalidDate": "Invalid date",
+    "age": {
+      "year": "year",
+      "years2to4": "years",
+      "years5plus": "years", 
+      "month": "month",
+      "months2to4": "months",
+      "months5plus": "months",
+      "lessThanMonth": "less than a month"
+    },
+    "infoCards": {
+      "management": {
+        "title": "Animal Management",
+        "description": "Complete system for pet records with photos, properties and history"
+      },
+      "tracking": {
+        "title": "Properties and Data",
+        "description": "Track health data, vaccinations, measurements and other important information"
+      },
+      "profiles": {
+        "title": "Public Profiles", 
+        "description": "Every animal has its own public profile with QR code for easy sharing"
+      }
+    }
+  },
+  "tagFilter": {
+    "loading": "Loading tags...",
+    "showLess": "Show less",
+    "showAll": "Show all ({{count}} more)"
+  },
+  "profile": {
+    "title": "My Profile",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "basicInfo": "Basic Information",
+    "contact": "Contact",
+    "social": "Social Media",
+    "name": "Name",
+    "email": "Email",
+    "emailReadonly": "Email cannot be changed",
+    "phone": "Phone",
+    "company": "Company",
+    "address": "Address",
+    "viber": "Viber",
+    "viberHelp": "Viber ID or phone number",
+    "whatsapp": "WhatsApp",
+    "whatsappHelp": "WhatsApp phone number",
+    "signal": "Signal",
+    "signalHelp": "Signal phone number",
+    "facebook": "Facebook",
+    "facebookHelp": "Facebook profile or username",
+    "instagram": "Instagram",
+    "instagramHelp": "Instagram username",
+    "twitter": "Twitter",
+    "twitterHelp": "Twitter handle (@username)",
+    "linkedin": "LinkedIn",
+    "linkedinHelp": "LinkedIn profile URL",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
+    "saveSuccess": "Profile saved successfully",
+    "saveError": "Error saving profile",
+    "passwordChangeSuccess": "Password changed successfully",
+    "passwordChangeError": "Error changing password"
   }
 }

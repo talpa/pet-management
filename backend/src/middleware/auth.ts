@@ -38,6 +38,17 @@ export const authenticateToken = async (req: AuthenticatedRequest, res: Response
         return;
       }
 
+      // Load user from database for x-user-id header
+      const user = await User.findByPk(req.userId);
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          message: 'User not found',
+        });
+        return;
+      }
+      
+      req.user = user;
       next();
       return;
     }

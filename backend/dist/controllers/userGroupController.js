@@ -666,4 +666,3 @@ exports.userGroupController = {
         }
     },
 };
-//# sourceMappingURL=userGroupController.js.map

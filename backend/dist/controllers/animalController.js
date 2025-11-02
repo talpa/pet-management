@@ -11,17 +11,65 @@ const sequelize_1 = require("sequelize");
 const upload_1 = require("../middleware/upload");
 const qrCodeService_1 = __importDefault(require("../services/qrCodeService"));
 const path_1 = __importDefault(require("path"));
+const transformImageData = (images) => {
+    return images.map((image) => {
+        const imageData = image.toJSON ? image.toJSON() : image;
+        return {
+            ...imageData,
+            url: imageData.filePath ?
+                `${process.env.API_URL || 'http://localhost:4444'}${imageData.filePath}` :
+                `${process.env.API_URL || 'http://localhost:4444'}/uploads/animals/${imageData.filename}`,
+            thumbnailUrl: imageData.thumbnailFilename ?
+                `${process.env.API_URL || 'http://localhost:4444'}/uploads/animals/${imageData.thumbnailFilename}` :
+                `${process.env.API_URL || 'http://localhost:4444'}/uploads/animals/thumb_${imageData.filename}`,
+        };
+    });
+};
+const transformAnimalData = (animal) => {
+    const animalJson = animal.toJSON();
+    if (animalJson.owner) {
+        animalJson.ownerName = animalJson.owner.name;
+        animalJson.ownerId = animalJson.owner.id;
+    }
+    if (animalJson.images && animalJson.images.length > 0) {
+        animalJson.images = transformImageData(animal.images);
+    }
+    return animalJson;
+};
 class AnimalController {
     static async getAll(req, res) {
         try {
-            const { page = 1, limit = 20, search, speciesId, ownerId, gender, sortBy = 'created_at', sortOrder = 'DESC' } = req.query;
-            const userId = req.headers['x-user-id'];
+            const { page = 1, limit = 20, search, speciesId, ownerId, gender, tags, sortBy = 'created_at', sortOrder = 'DESC' } = req.query;
+            const user = req.user;
             const offset = (Number(page) - 1) * Number(limit);
             let whereClause = { isActive: true };
-            const hasAdminAccess = true;
-            if (!hasAdminAccess && userId) {
-                whereClause.ownerId = userId;
-            }
+            let includeClause = [
+                {
+                    model: animalAssociations_1.AnimalSpecies,
+                    as: 'species',
+                    attributes: ['id', 'name', 'scientificName', 'category'],
+                },
+                {
+                    model: User_1.User,
+                    as: 'owner',
+                    attributes: ['id', 'name', 'email'],
+                },
+                {
+                    model: animalAssociations_1.AnimalProperty,
+                    as: 'properties',
+                },
+                {
+                    model: animalAssociations_1.AnimalImage,
+                    as: 'images',
+                    required: false,
+                },
+                {
+                    model: animalAssociations_1.AnimalTag,
+                    as: 'tags',
+                    through: { attributes: [] },
+                    required: false,
+                },
+            ];
             if (search) {
                 whereClause[sequelize_1.Op.or] = [
                     { name: { [sequelize_1.Op.iLike]: `%${search}%` } },
@@ -31,11 +79,43 @@ class AnimalController {
             if (speciesId) {
                 whereClause.speciesId = speciesId;
             }
-            if (ownerId && hasAdminAccess) {
+            if (ownerId) {
                 whereClause.ownerId = ownerId;
             }
             if (gender) {
                 whereClause.gender = gender;
+            }
+            if (tags) {
+                let tagArray;
+                if (Array.isArray(tags)) {
+                    tagArray = tags;
+                }
+                else {
+                    tagArray = tags.split(',').map(tag => tag.trim());
+                }
+                if (tagArray.length > 0) {
+                    const tagRecords = await animalAssociations_1.AnimalTag.findAll({
+                        where: { name: { [sequelize_1.Op.in]: tagArray } },
+                        attributes: ['id']
+                    });
+                    if (tagRecords.length > 0) {
+                        const tagIds = tagRecords.map(tag => tag.id);
+                        const animalTagAssignments = await animalAssociations_1.AnimalTagAssignment.findAll({
+                            where: { tagId: { [sequelize_1.Op.in]: tagIds } },
+                            attributes: ['animalId']
+                        });
+                        const animalIds = [...new Set(animalTagAssignments.map(ata => ata.animalId))];
+                        if (animalIds.length > 0) {
+                            whereClause.id = { [sequelize_1.Op.in]: animalIds };
+                        }
+                        else {
+                            whereClause.id = { [sequelize_1.Op.in]: [] };
+                        }
+                    }
+                    else {
+                        whereClause.id = { [sequelize_1.Op.in]: [] };
+                    }
+                }
             }
             const validSortFields = ['created_at', 'updated_at', 'name', 'birthDate'];
             const validSortOrders = ['ASC', 'DESC'];
@@ -43,34 +123,15 @@ class AnimalController {
             const finalSortOrder = validSortOrders.includes(sortOrder.toUpperCase()) ? sortOrder.toUpperCase() : 'DESC';
             const { count, rows: animals } = await animalAssociations_1.Animal.findAndCountAll({
                 where: whereClause,
-                include: [
-                    {
-                        model: animalAssociations_1.AnimalSpecies,
-                        as: 'species',
-                        attributes: ['id', 'name', 'scientificName', 'category'],
-                    },
-                    {
-                        model: User_1.User,
-                        as: 'owner',
-                        attributes: ['id', 'name', 'email'],
-                    },
-                    {
-                        model: animalAssociations_1.AnimalProperty,
-                        as: 'properties',
-                    },
-                    {
-                        model: animalAssociations_1.AnimalImage,
-                        as: 'images',
-                        required: false,
-                    },
-                ],
+                include: includeClause,
                 order: [[finalSortBy, finalSortOrder]],
                 limit: Number(limit),
                 offset,
+                distinct: true,
             });
             res.json({
                 success: true,
-                data: animals,
+                data: animals.map(transformAnimalData),
                 pagination: {
                     page: Number(page),
                     limit: Number(limit),
@@ -84,6 +145,125 @@ class AnimalController {
             res.status(500).json({
                 success: false,
                 message: 'Error fetching animals',
+                error: error instanceof Error ? error.message : 'Unknown error',
+            });
+        }
+    }
+    static async getMyAnimals(req, res) {
+        try {
+            const { page = 1, limit = 20, search, speciesId, gender, tags, sortBy = 'created_at', sortOrder = 'DESC' } = req.query;
+            const user = req.user;
+            const offset = (Number(page) - 1) * Number(limit);
+            if (!user) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Authentication required',
+                });
+            }
+            let whereClause = {
+                isActive: true,
+                ownerId: user.id
+            };
+            let includeClause = [
+                {
+                    model: animalAssociations_1.AnimalSpecies,
+                    as: 'species',
+                    attributes: ['id', 'name', 'scientificName', 'category'],
+                },
+                {
+                    model: User_1.User,
+                    as: 'owner',
+                    attributes: ['id', 'name', 'email'],
+                },
+                {
+                    model: animalAssociations_1.AnimalProperty,
+                    as: 'properties',
+                },
+                {
+                    model: animalAssociations_1.AnimalImage,
+                    as: 'images',
+                    required: false,
+                },
+                {
+                    model: animalAssociations_1.AnimalTag,
+                    as: 'tags',
+                    through: { attributes: [] },
+                    required: false,
+                },
+            ];
+            if (search) {
+                whereClause[sequelize_1.Op.or] = [
+                    { name: { [sequelize_1.Op.iLike]: `%${search}%` } },
+                    { description: { [sequelize_1.Op.iLike]: `%${search}%` } }
+                ];
+            }
+            if (speciesId) {
+                whereClause.speciesId = speciesId;
+            }
+            if (gender) {
+                whereClause.gender = gender;
+            }
+            if (tags) {
+                let tagArray;
+                if (Array.isArray(tags)) {
+                    tagArray = tags;
+                }
+                else {
+                    tagArray = tags.split(',').map(tag => tag.trim());
+                }
+                if (tagArray.length > 0) {
+                    const tagRecords = await animalAssociations_1.AnimalTag.findAll({
+                        where: { name: { [sequelize_1.Op.in]: tagArray } },
+                        attributes: ['id']
+                    });
+                    if (tagRecords.length > 0) {
+                        const tagIds = tagRecords.map(tag => tag.id);
+                        const animalTagAssignments = await animalAssociations_1.AnimalTagAssignment.findAll({
+                            where: { tagId: { [sequelize_1.Op.in]: tagIds } },
+                            attributes: ['animalId']
+                        });
+                        const animalIds = [...new Set(animalTagAssignments.map(ata => ata.animalId))];
+                        if (animalIds.length > 0) {
+                            whereClause.id = { [sequelize_1.Op.in]: animalIds };
+                        }
+                        else {
+                            whereClause.id = { [sequelize_1.Op.in]: [] };
+                        }
+                    }
+                    else {
+                        whereClause.id = { [sequelize_1.Op.in]: [] };
+                    }
+                }
+            }
+            const validSortFields = ['created_at', 'updated_at', 'name', 'birthDate'];
+            const validSortOrders = ['ASC', 'DESC'];
+            const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'created_at';
+            const finalSortOrder = validSortOrders.includes(sortOrder.toUpperCase()) ? sortOrder.toUpperCase() : 'DESC';
+            const { count, rows: animals } = await animalAssociations_1.Animal.findAndCountAll({
+                where: whereClause,
+                include: includeClause,
+                order: [[finalSortBy, finalSortOrder]],
+                limit: Number(limit),
+                offset,
+                distinct: true,
+            });
+            console.log(`User ${user.id} (${user.name}) requested their animals: found ${count} animals`);
+            res.json({
+                success: true,
+                data: animals.map(transformAnimalData),
+                pagination: {
+                    page: Number(page),
+                    limit: Number(limit),
+                    total: count,
+                    pages: Math.ceil(count / Number(limit)),
+                },
+            });
+        }
+        catch (error) {
+            console.error('Error fetching user animals:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Error fetching your animals',
                 error: error instanceof Error ? error.message : 'Unknown error',
             });
         }
@@ -138,7 +318,7 @@ class AnimalController {
             }
             return res.json({
                 success: true,
-                data: animal,
+                data: transformAnimalData(animal),
             });
         }
         catch (error) {
@@ -195,7 +375,7 @@ class AnimalController {
             }
             return res.json({
                 success: true,
-                data: animal,
+                data: transformAnimalData(animal),
             });
         }
         catch (error) {
@@ -209,7 +389,7 @@ class AnimalController {
     }
     static async create(req, res) {
         try {
-            const { name, speciesId, ownerId, birthDate, gender, description, seoUrl, properties = [] } = req.body;
+            const { name, speciesId, ownerId, birthDate, gender, description, seoUrl, properties = [], tags = [] } = req.body;
             const userId = req.headers['x-user-id'];
             const animal = await animalAssociations_1.Animal.create({
                 name,
@@ -242,6 +422,14 @@ class AnimalController {
                 console.log('AnimalProperties to create:', JSON.stringify(animalProperties, null, 2));
                 await animalAssociations_1.AnimalProperty.bulkCreate(animalProperties);
             }
+            if (tags.length > 0) {
+                console.log('Tags to assign:', tags);
+                const tagAssignments = tags.map((tagId) => ({
+                    animalId: animal.id,
+                    tagId: tagId,
+                }));
+                await animalAssociations_1.AnimalTagAssignment.bulkCreate(tagAssignments);
+            }
             const createdAnimal = await animalAssociations_1.Animal.findByPk(animal.id, {
                 include: [
                     {
@@ -256,6 +444,11 @@ class AnimalController {
                     {
                         model: animalAssociations_1.AnimalProperty,
                         as: 'properties',
+                    },
+                    {
+                        model: animalAssociations_1.AnimalTag,
+                        as: 'tags',
+                        through: { attributes: [] },
                     },
                 ],
             });
@@ -286,7 +479,7 @@ class AnimalController {
     static async update(req, res) {
         try {
             const { id } = req.params;
-            const { name, speciesId, birthDate, gender, description, seoUrl, properties } = req.body;
+            const { name, speciesId, ownerId, birthDate, gender, description, seoUrl, properties, tags } = req.body;
             const userId = req.headers['x-user-id'];
             let whereClause = { id, isActive: true };
             const hasAdminAccess = true;
@@ -303,6 +496,7 @@ class AnimalController {
             await animal.update({
                 name,
                 speciesId,
+                ownerId: ownerId || animal.ownerId,
                 birthDate,
                 gender,
                 description,
@@ -332,6 +526,19 @@ class AnimalController {
                     await animalAssociations_1.AnimalProperty.bulkCreate(animalProperties);
                 }
             }
+            if (tags !== undefined && Array.isArray(tags)) {
+                await animalAssociations_1.AnimalTagAssignment.destroy({
+                    where: { animalId: id }
+                });
+                if (tags.length > 0) {
+                    console.log('Updating tags:', tags);
+                    const tagAssignments = tags.map((tagId) => ({
+                        animalId: parseInt(id),
+                        tagId: tagId,
+                    }));
+                    await animalAssociations_1.AnimalTagAssignment.bulkCreate(tagAssignments);
+                }
+            }
             const updatedAnimal = await animalAssociations_1.Animal.findByPk(id, {
                 include: [
                     {
@@ -346,6 +553,11 @@ class AnimalController {
                     {
                         model: animalAssociations_1.AnimalProperty,
                         as: 'properties',
+                    },
+                    {
+                        model: animalAssociations_1.AnimalTag,
+                        as: 'tags',
+                        through: { attributes: [] },
                     },
                 ],
             });
@@ -431,6 +643,7 @@ class AnimalController {
             }
             const uploadedImages = [];
             const uploadsDir = path_1.default.join(__dirname, '../../uploads/animals');
+            const errors = [];
             for (const file of files) {
                 try {
                     const processedPath = path_1.default.join(uploadsDir, `processed-${file.filename}`);
@@ -464,13 +677,22 @@ class AnimalController {
                 }
                 catch (error) {
                     console.error('Error processing image:', error);
+                    errors.push(`Failed to process ${file.originalname}: ${error instanceof Error ? error.message : 'Unknown error'}`);
                     (0, upload_1.deleteImageFile)(file.path);
                 }
             }
+            if (errors.length > 0 && uploadedImages.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'All images failed to process',
+                    errors: errors,
+                });
+            }
             return res.json({
                 success: true,
-                message: 'Images uploaded successfully',
+                message: uploadedImages.length > 0 ? 'Images uploaded successfully' : 'Some images failed to process',
                 data: uploadedImages,
+                errors: errors.length > 0 ? errors : undefined,
             });
         }
         catch (error) {
@@ -722,4 +944,3 @@ class AnimalController {
     }
 }
 exports.AnimalController = AnimalController;
-//# sourceMappingURL=animalController.js.map

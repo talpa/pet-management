@@ -10,4 +10,3 @@ router.get('/user/:userId', permissionController_1.getUserPermissions);
 router.post('/grant', permissionController_1.grantPermission);
 router.delete('/user/:userId/permission/:permissionId', permissionController_1.revokePermission);
 exports.default = router;
-//# sourceMappingURL=permissions.js.map

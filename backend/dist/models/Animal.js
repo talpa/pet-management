@@ -88,4 +88,3 @@ Animal.init({
     updatedAt: 'updated_at',
 });
 exports.default = Animal;
-//# sourceMappingURL=Animal.js.map

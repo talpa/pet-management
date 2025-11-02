@@ -40,10 +40,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
             Veřejná stránka
           </Button>
           
-          {/* Odkaz na vlastní zvířata pro všechny přihlášené uživatele */}
-          <Button color="inherit" component={Link} to="/my-animals">
-            Moje zvířata
-          </Button>
+          {/* Dynamický odkaz podle role uživatele */}
+          {isAdmin ? (
+            <Button color="inherit" component={Link} to="/animals">
+              Zvířata
+            </Button>
+          ) : (
+            <Button color="inherit" component={Link} to="/my-animals">
+              Moje zvířata
+            </Button>
+          )}
           
           {/* Admin-only odkazy */}
           {isAdmin && (
@@ -57,26 +63,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
               <Button color="inherit" component={Link} to="/permissions">
                 {t('navigation.permissions')}
               </Button>
-              <Button color="inherit" component={Link} to="/groups">
-                {t('navigation.groups')}
-              </Button>
-              <Button color="inherit" component={Link} to="/memberships">
-                {t('navigation.memberships')}
-              </Button>
-              <Button color="inherit" component={Link} to="/oauth-permissions">
-                {t('navigation.oauthPermissions')}
-              </Button>
-              <Button color="inherit" component={Link} to="/oauth-test">
-                {t('navigation.oauthTest')}
-              </Button>
-              <Button color="inherit" component={Link} to="/oauth-debug">
-                {t('navigation.oauthDebug')}
-              </Button>
               <Button color="inherit" component={Link} to="/animal-species">
                 {t('navigation.animalSpecies')}
-              </Button>
-              <Button color="inherit" component={Link} to="/animals">
-                {t('navigation.animals')}
               </Button>
             </>
           )}

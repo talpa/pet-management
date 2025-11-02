@@ -423,4 +423,3 @@ const classicRegister = async (req, res) => {
     }
 };
 exports.classicRegister = classicRegister;
-//# sourceMappingURL=authController.js.map

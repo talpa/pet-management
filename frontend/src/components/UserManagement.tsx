@@ -37,12 +37,15 @@ import {
   Delete,
   Search,
   Person as PersonIcon,
+  Key,
 } from '@mui/icons-material';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchUsers, createUser, updateUser, deleteUser, UserState } from '../store/userSlice';
 import { setSearchTerm, setSortColumn, setCurrentPage, setItemsPerPage, DataState } from '../store/dataSlice';
 import { User } from '../types/User';
 import ViewModeToggle from './ViewModeToggle';
+import { useTranslation } from 'react-i18next';
+import { setSnackbar } from '../store/slices/notificationSlice';
 
 interface UserFormData {
   name: string;
@@ -54,6 +57,7 @@ interface UserFormData {
 }
 
 const UserManagement: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const { users, loading, error } = useSelector((state: RootState) => state.user as UserState);
   const { searchTerm, sortColumn, sortDirection, currentPage, itemsPerPage } = useSelector(
@@ -70,6 +74,9 @@ const UserManagement: React.FC = () => {
   });
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [passwordUser, setPasswordUser] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState('');
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
     return (localStorage.getItem('userViewMode') as 'grid' | 'list') || 'list';
@@ -138,6 +145,57 @@ const UserManagement: React.FC = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingUser(null);
+  };
+
+  const handleOpenPasswordDialog = (user: User) => {
+    setPasswordUser(user);
+    setNewPassword('');
+    setOpenPasswordDialog(true);
+  };
+
+  const handleClosePasswordDialog = () => {
+    setOpenPasswordDialog(false);
+    setPasswordUser(null);
+    setNewPassword('');
+  };
+
+  const handleChangePassword = async () => {
+    if (!passwordUser || !newPassword) return;
+
+    try {
+      const response = await fetch(`/api/users/${passwordUser.id}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ password: newPassword }),
+      });
+
+      if (response.ok) {
+        handleClosePasswordDialog();
+        dispatch(setSnackbar({
+          open: true,
+          message: t('userManagement.changePassword.success'),
+          severity: 'success'
+        }));
+      } else {
+        const error = await response.json();
+        console.error('Error changing password:', error);
+        dispatch(setSnackbar({
+          open: true,
+          message: t('userManagement.changePassword.error'),
+          severity: 'error'
+        }));
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      dispatch(setSnackbar({
+        open: true,
+        message: t('userManagement.changePassword.error'),
+        severity: 'error'
+      }));
+    }
   };
 
   const handleFormChange = (field: keyof UserFormData, value: string) => {
@@ -287,6 +345,16 @@ const UserManagement: React.FC = () => {
                     >
                       <Edit />
                     </IconButton>
+                    {user.provider === 'local' && (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleOpenPasswordDialog(user)}
+                        color="secondary"
+                        title={t('userManagement.changePassword.tooltip')}
+                      >
+                        <Key />
+                      </IconButton>
+                    )}
                     <IconButton
                       size="small"
                       onClick={() => handleDelete(user.id)}
@@ -359,6 +427,17 @@ const UserManagement: React.FC = () => {
                         <Edit />
                       </IconButton>
                     </Tooltip>
+                    {user.provider === 'local' && (
+                      <Tooltip title={t('userManagement.changePassword.tooltip')}>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleOpenPasswordDialog(user)}
+                          color="secondary"
+                        >
+                          <Key />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                     <Tooltip title="Smazat uživatele">
                       <IconButton
                         size="small"
@@ -458,6 +537,37 @@ const UserManagement: React.FC = () => {
           <Button onClick={handleCloseDialog}>Zrušit</Button>
           <Button onClick={handleSubmit} variant="contained">
             {editingUser ? 'Uložit změny' : 'Vytvořit uživatele'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Password Change Dialog */}
+      <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {t('userManagement.changePassword.title')}: {passwordUser?.name}
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {t('userManagement.changePassword.description')}
+          </Typography>
+          <TextField
+            fullWidth
+            label={t('userManagement.changePassword.newPassword')}
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            sx={{ mt: 1 }}
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClosePasswordDialog}>{t('userManagement.changePassword.cancel')}</Button>
+          <Button 
+            onClick={handleChangePassword} 
+            variant="contained"
+            disabled={!newPassword || newPassword.length < 6}
+          >
+            {t('userManagement.changePassword.button')}
           </Button>
         </DialogActions>
       </Dialog>

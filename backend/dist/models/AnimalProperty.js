@@ -52,4 +52,3 @@ AnimalProperty.init({
     updatedAt: 'updated_at',
 });
 exports.default = AnimalProperty;
-//# sourceMappingURL=AnimalProperty.js.map

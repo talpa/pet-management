@@ -8,6 +8,15 @@ interface UserAttributes {
   password?: string; // For local authentication
   phone?: string;
   company?: string;
+  // New contact fields
+  address?: string;
+  viber?: string;
+  whatsapp?: string;
+  signal?: string;
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  linkedin?: string;
   role: string;
   status: 'active' | 'inactive';
   // OAuth fields
@@ -29,6 +38,15 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public password?: string; // For local authentication
   public phone?: string;
   public company?: string;
+  // New contact fields
+  public address?: string;
+  public viber?: string;
+  public whatsapp?: string;
+  public signal?: string;
+  public facebook?: string;
+  public instagram?: string;
+  public twitter?: string;
+  public linkedin?: string;
   public role!: string;
   public status!: 'active' | 'inactive';
   // OAuth fields
@@ -43,16 +61,12 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
   // Association properties
   public permissions?: any[];
-  public userGroups?: any[];
   public userPermissions?: any[];
-  public groupMemberships?: any[];
 
   // Static associations
   public static associations: {
     permissions: Association<User, any>;
-    userGroups: Association<User, any>;
     userPermissions: Association<User, any>;
-    groupMemberships: Association<User, any>;
   };
 }
 
@@ -88,6 +102,38 @@ User.init(
       allowNull: true,
     },
     company: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    viber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    whatsapp: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    signal: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    facebook: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    instagram: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    twitter: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    linkedin: {
       type: DataTypes.STRING,
       allowNull: true,
     },

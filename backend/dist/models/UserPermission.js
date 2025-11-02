@@ -68,4 +68,3 @@ UserPermission.init({
         },
     ],
 });
-//# sourceMappingURL=UserPermission.js.map

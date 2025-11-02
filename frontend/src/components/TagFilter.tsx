@@ -11,6 +11,7 @@ import {
   Alert,
 } from '@mui/material';
 import { FilterList, ExpandMore, ExpandLess } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import apiClient from '../services/api';
 import { Tag } from './TagInput';
 
@@ -27,6 +28,7 @@ const TagFilter: React.FC<TagFilterProps> = ({
   showTitle = true,
   maxTagsVisible = 10,
 }) => {
+  const { t } = useTranslation();
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +92,7 @@ const TagFilter: React.FC<TagFilterProps> = ({
       <Paper sx={{ p: 2, mb: 2 }}>
         <Box display="flex" alignItems="center" gap={1}>
           <CircularProgress size={20} />
-          <Typography variant="body2">Načítám tagy...</Typography>
+          <Typography variant="body2">{t('tagFilter.loading')}</Typography>
         </Box>
       </Paper>
     );
@@ -161,8 +163,8 @@ const TagFilter: React.FC<TagFilterProps> = ({
             endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
           >
             {expanded 
-              ? 'Zobrazit méně' 
-              : `Zobrazit všechny (${availableTags.length - maxTagsVisible} dalších)`
+              ? t('tagFilter.showLess')
+              : t('tagFilter.showAll', { count: availableTags.length - maxTagsVisible })
             }
           </Button>
         </Box>

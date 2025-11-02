@@ -13,4 +13,3 @@ router.post('/species', animalSpeciesController_1.AnimalSpeciesController.create
 router.put('/species/:id', animalSpeciesController_1.AnimalSpeciesController.update);
 router.delete('/species/:id', animalSpeciesController_1.AnimalSpeciesController.delete);
 exports.default = router;
-//# sourceMappingURL=animalSpecies.js.map

@@ -69,4 +69,3 @@ SpeciesProperty.init({
     updatedAt: false,
 });
 exports.default = SpeciesProperty;
-//# sourceMappingURL=SpeciesProperty.js.map

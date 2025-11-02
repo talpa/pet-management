@@ -22,7 +22,8 @@
     "update": "Aktualizovat",
     "view": "Zobrazit",
     "yes": "Ano",
-    "no": "Ne"
+    "no": "Ne",
+    "admin": "Administrace"
   },
   "auth": {
     "title": "Přihlášení",
@@ -63,9 +64,6 @@
     "permissions": "Oprávnění",
     "groups": "Skupiny",
     "memberships": "Členství",
-    "oauthPermissions": "OAuth Oprávnění",
-    "oauthTest": "OAuth Test",
-    "oauthDebug": "OAuth Debug",
     "animalSpecies": "Druhy zvířat",
     "animals": "Zvířata"
   },
@@ -98,24 +96,17 @@
       "admin": "Administrátor",
       "user": "Uživatel",
       "moderator": "Moderátor"
+    },
+    "changePassword": {
+      "title": "Změnit heslo uživatele",
+      "description": "Zadejte nové heslo pro uživatele. Heslo musí mít alespoň 6 znaků.",
+      "newPassword": "Nové heslo",
+      "button": "Změnit heslo",
+      "cancel": "Zrušit",
+      "success": "Heslo bylo úspěšně změněno",
+      "error": "Chyba při změně hesla",
+      "tooltip": "Změnit heslo"
     }
-  },
-  "oauth": {
-    "testTitle": "OAuth Test (Přímé přesměrování)",
-    "testSubtitle": "Test OAuth přihlášení bez popup oken",
-    "debugMode": "Debug Mode:",
-    "debugDescription": "Tento test používá přímé přesměrování místo popup oken.",
-    "testGoogleDirect": "Test Google OAuth (Přímé)",
-    "testFacebookDirect": "Test Facebook OAuth (Přímé)",
-    "debugInfo": "Debug Info:",
-    "frontend": "Frontend",
-    "backend": "Backend",
-    "googleUrl": "Google URL",
-    "facebookUrl": "Facebook URL",
-    "loginSuccessful": "Přihlášení úspěšné!",
-    "windowCloseAuto": "Toto okno se automaticky zavře...",
-    "windowCloseManual": "Zavřít okno ručně",
-    "loginError": "Chyba přihlášení"
   },
   "animalSpecies": {
     "title": "Správa druhů zvířat",
@@ -271,5 +262,107 @@
       "generateFailed": "Generování QR kódu selhalo",
       "downloadFailed": "Stažení QR kódu selhalo"
     }
+  },
+  "home": {
+    "title": "Pet Management System",
+    "welcomeTitle": "Vítejte v Pet Management System",
+    "welcomeSubtitle": "Profesionální správa domácích mazlíčků",
+    "searchPlaceholder": "Vyhledejte zvíře podle názvu, popisu nebo majitele...",
+    "filterBySpecies": "Druh zvířete",
+    "filterByTags": "Filtrovat podle tagů",
+    "allSpecies": "Všechny druhy",
+    "showFilters": "Zobrazit filtry",
+    "hideFilters": "Skrýt filtry",
+    "clearFilters": "Vyčistit vše",
+    "clearAllFilters": "Vyčistit filtry a zobrazit vše",
+    "filteringAndSearch": "Filtrování a vyhledávání",
+    "activeFilters": "Aktivní filtry:",
+    "activeFiltersCount": "{{count}} aktivních filtrů",
+    "searchLabel": "Hledání:",
+    "speciesLabel": "Druh:",
+    "tagsLabel": "Tagy:",
+    "recentAnimalsTitle": "🏆 Naposledy přidaná zvířata",
+    "searchResultsTitle": "🔍 Výsledky vyhledávání", 
+    "recentAnimalsSubtitle": "Nejnovější příspěvky v našem systému",
+    "searchResultsCount": "Nalezeno {{count}} {{countText}} podle zadaných kritérií",
+    "animalSingular": "zvíře",
+    "animalPlural": "zvířata", 
+    "animalGenitive": "zvířat",
+    "noAnimalsFound": "Žádná zvířata nevyhovují zadaným kritériím",
+    "noAnimalsYet": "Zatím nebyla přidána žádná zvířata",
+    "loadingAnimals": "Načítání zvířat...",
+    "errorLoadingAnimals": "Nepodařilo se načíst zvířata",
+    "viewProfile": "Zobrazit profil",
+    "footer": "© 2025 Pet Management System",
+    "addedOn": "Přidáno:",
+    "clickForDetail": "Klikněte pro detail",
+    "unknownDate": "Neznámé datum",
+    "invalidDate": "Neplatné datum",
+    "age": {
+      "year": "rok",
+      "years2to4": "roky", 
+      "years5plus": "let",
+      "month": "měsíc",
+      "months2to4": "měsíce",
+      "months5plus": "měsíců",
+      "lessThanMonth": "méně než měsíc"
+    },
+    "infoCards": {
+      "management": {
+        "title": "Správa zvířat",
+        "description": "Kompletní systém pro evidenci domácích mazlíčků s fotografiemi, vlastnostmi a historií"
+      },
+      "tracking": {
+        "title": "Vlastnosti a údaje", 
+        "description": "Sledování zdravotních údajů, vakcinací, měření a dalších důležitých informací"
+      },
+      "profiles": {
+        "title": "Veřejné profily",
+        "description": "Každé zvíře má vlastní veřejný profil s QR kódem pro snadné sdílení"
+      }
+    }
+  },
+  "tagFilter": {
+    "loading": "Načítám tagy...",
+    "showLess": "Zobrazit méně",
+    "showAll": "Zobrazit všechny ({{count}} dalších)"
+  },
+  "profile": {
+    "title": "Můj profil",
+    "edit": "Upravit",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "basicInfo": "Základní údaje",
+    "contact": "Kontakt",
+    "social": "Sociální sítě",
+    "name": "Jméno",
+    "email": "E-mail",
+    "emailReadonly": "E-mail nelze změnit",
+    "phone": "Telefon",
+    "company": "Společnost",
+    "address": "Adresa",
+    "viber": "Viber",
+    "viberHelp": "Viber ID nebo telefonní číslo",
+    "whatsapp": "WhatsApp",
+    "whatsappHelp": "WhatsApp telefonní číslo",
+    "signal": "Signal",
+    "signalHelp": "Signal telefonní číslo",
+    "facebook": "Facebook",
+    "facebookHelp": "Facebook profil nebo username",
+    "instagram": "Instagram",
+    "instagramHelp": "Instagram username",
+    "twitter": "Twitter",
+    "twitterHelp": "Twitter handle (@username)",
+    "linkedin": "LinkedIn",
+    "linkedinHelp": "LinkedIn profil URL",
+    "changePassword": "Změnit heslo",
+    "currentPassword": "Současné heslo",
+    "newPassword": "Nové heslo",
+    "confirmPassword": "Potvrdit heslo",
+    "passwordMismatch": "Hesla se neshodují",
+    "saveSuccess": "Profil byl úspěšně uložen",
+    "saveError": "Chyba při ukládání profilu",
+    "passwordChangeSuccess": "Heslo bylo úspěšně změněno",
+    "passwordChangeError": "Chyba při změně hesla"
   }
 }

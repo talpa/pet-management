@@ -5,6 +5,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  changeUserPassword,
 } from '../controllers/userController';
 import { validateUser } from '../middleware/validation';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
@@ -20,6 +21,7 @@ router.get('/', getAllUsers);
 router.get('/:id', getUserById);
 router.post('/', validateUser, createUser);
 router.put('/:id', validateUser, updateUser);
+router.put('/:id/password', changeUserPassword);
 router.delete('/:id', deleteUser);
 
 export default router;

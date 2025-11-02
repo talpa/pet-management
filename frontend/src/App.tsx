@@ -4,11 +4,7 @@ import HomePage from './components/HomePage';
 import AdminDashboard from './components/AdminDashboard';
 import UserManagement from './components/UserManagement';
 import UserPermissionsManagement from './components/UserPermissionsManagement';
-import UserGroupsManagement from './components/UserGroupsManagement';
-import UserGroupMembership from './components/UserGroupMembership';
-import OAuth2PermissionManager from './components/OAuth2PermissionManager';
-import OAuth2TestPage from './components/OAuth2TestPage';
-import OAuthTest from './components/OAuthTest';
+
 import AnimalSpeciesManagement from './components/AnimalSpeciesManagement';
 import AnimalManagement from './components/AnimalManagement';
 import AnimalDetail from './components/AnimalDetail';
@@ -17,6 +13,7 @@ import ClassicLogin from './components/ClassicLogin';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/AdminLayout';
 import MyAnimalsPage from './components/MyAnimalsPage';
+import UserProfilePage from './components/UserProfilePage';
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { checkAuth } from './store/authSlice';
 
@@ -45,6 +42,16 @@ function App() {
           element={
             <ProtectedRoute>
               <MyAnimalsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <UserProfilePage />
+              </AdminLayout>
             </ProtectedRoute>
           } 
         />
@@ -98,56 +105,6 @@ function App() {
             <ProtectedRoute>
               <AdminLayout requireAdmin={true}>
                 <UserPermissionsManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/groups" 
-          element={
-            <ProtectedRoute>
-              <AdminLayout requireAdmin={true}>
-                <UserGroupsManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/memberships" 
-          element={
-            <ProtectedRoute>
-              <AdminLayout requireAdmin={true}>
-                <UserGroupMembership />
-              </AdminLayout>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/oauth-permissions" 
-          element={
-            <ProtectedRoute>
-              <AdminLayout requireAdmin={true}>
-                <OAuth2PermissionManager />
-              </AdminLayout>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/oauth-test" 
-          element={
-            <ProtectedRoute>
-              <AdminLayout requireAdmin={true}>
-                <OAuth2TestPage />
-              </AdminLayout>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/oauth-debug" 
-          element={
-            <ProtectedRoute>
-              <AdminLayout requireAdmin={true}>
-                <OAuthTest />
               </AdminLayout>
             </ProtectedRoute>
           } 

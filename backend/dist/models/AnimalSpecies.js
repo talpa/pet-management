@@ -43,4 +43,3 @@ AnimalSpecies.init({
     updatedAt: 'updated_at',
 });
 exports.default = AnimalSpecies;
-//# sourceMappingURL=AnimalSpecies.js.map

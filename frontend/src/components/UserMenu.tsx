@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -111,7 +112,7 @@ const UserMenu: React.FC = () => {
         <Divider />
 
         {/* Menu Items */}
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem component={Link} to="/profile" onClick={handleMenuClose}>
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>

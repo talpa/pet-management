@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AnimalImage = exports.AnimalProperty = exports.Animal = exports.SpeciesProperty = exports.AnimalSpecies = void 0;
+exports.AnimalTagAssignment = exports.AnimalTag = exports.AnimalImage = exports.AnimalProperty = exports.Animal = exports.SpeciesProperty = exports.AnimalSpecies = void 0;
 const AnimalSpecies_1 = __importDefault(require("./AnimalSpecies"));
 exports.AnimalSpecies = AnimalSpecies_1.default;
 const SpeciesProperty_1 = __importDefault(require("./SpeciesProperty"));
@@ -14,6 +14,10 @@ const AnimalProperty_1 = __importDefault(require("./AnimalProperty"));
 exports.AnimalProperty = AnimalProperty_1.default;
 const AnimalImage_1 = __importDefault(require("./AnimalImage"));
 exports.AnimalImage = AnimalImage_1.default;
+const AnimalTag_1 = __importDefault(require("./AnimalTag"));
+exports.AnimalTag = AnimalTag_1.default;
+const AnimalTagAssignment_1 = __importDefault(require("./AnimalTagAssignment"));
+exports.AnimalTagAssignment = AnimalTagAssignment_1.default;
 const User_1 = require("./User");
 AnimalSpecies_1.default.hasMany(SpeciesProperty_1.default, {
     foreignKey: 'speciesId',
@@ -51,6 +55,36 @@ Animal_1.default.hasMany(AnimalImage_1.default, {
     as: 'images',
     onDelete: 'CASCADE',
 });
+Animal_1.default.belongsToMany(AnimalTag_1.default, {
+    through: AnimalTagAssignment_1.default,
+    foreignKey: 'animalId',
+    otherKey: 'tagId',
+    as: 'tags',
+});
+AnimalTag_1.default.belongsToMany(Animal_1.default, {
+    through: AnimalTagAssignment_1.default,
+    foreignKey: 'tagId',
+    otherKey: 'animalId',
+    as: 'animals',
+});
+AnimalTagAssignment_1.default.belongsTo(Animal_1.default, {
+    foreignKey: 'animalId',
+    as: 'animal',
+});
+AnimalTagAssignment_1.default.belongsTo(AnimalTag_1.default, {
+    foreignKey: 'tagId',
+    as: 'tag',
+});
+Animal_1.default.hasMany(AnimalTagAssignment_1.default, {
+    foreignKey: 'animalId',
+    as: 'tagAssignments',
+    onDelete: 'CASCADE',
+});
+AnimalTag_1.default.hasMany(AnimalTagAssignment_1.default, {
+    foreignKey: 'tagId',
+    as: 'animalAssignments',
+    onDelete: 'CASCADE',
+});
 AnimalProperty_1.default.belongsTo(Animal_1.default, {
     foreignKey: 'animalId',
     as: 'animal',
@@ -75,4 +109,3 @@ User_1.User.hasMany(AnimalImage_1.default, {
     foreignKey: 'uploadedBy',
     as: 'uploadedImages',
 });
-//# sourceMappingURL=animalAssociations.js.map

@@ -229,4 +229,3 @@ class AnimalSpeciesController {
     }
 }
 exports.AnimalSpeciesController = AnimalSpeciesController;
-//# sourceMappingURL=animalSpeciesController.js.map

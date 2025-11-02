@@ -5,8 +5,43 @@ import { authenticateToken, requireOwnershipOrAdmin, canCreateAnimals } from '..
 
 const router = express.Router();
 
-// Public routes (no auth required)
-router.get('/', AnimalController.getAll); // Public gallery can see all animals
+// Optional auth middleware - passes user info if available, but doesn't require it
+const optionalAuth = async (req: any, res: any, next: any) => {
+  try {
+    const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
+    const userId = req.headers['x-user-id'];
+    
+    if (token) {
+      // If token exists, try to verify it
+      const jwt = require('jsonwebtoken');
+      const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      
+      const { User } = require('../models/User');
+      const user = await User.findByPk(decoded.id);
+      if (user) {
+        req.userId = user.id;
+        req.user = user;
+      }
+    } else if (userId && !isNaN(parseInt(userId as string))) {
+      // Fallback to x-user-id header
+      req.userId = parseInt(userId as string, 10);
+    }
+    
+    next();
+  } catch (error) {
+    // On auth error, continue without user info (public access)
+    console.log('Optional auth failed, continuing as public:', error);
+    next();
+  }
+};
+
+// Public routes with optional auth
+router.get('/', optionalAuth, AnimalController.getAll); // Public gallery with optional user context
+
+// Protected route for user's own animals (must be before /:id route)
+router.get('/my', authenticateToken, AnimalController.getMyAnimals); // Only authenticated user's animals
+
 router.get('/by-seo/:seoUrl', AnimalController.getBySeoUrl); // Public animal detail
 router.get('/:id', AnimalController.getById); // Public animal detail
 

@@ -12,13 +12,13 @@ import './models/animalAssociations'; // Import animal associations
 import userRoutes from './routes/userRoutes';
 import healthRoutes from './routes/healthRoutes';
 import permissionRoutes from './routes/permissions';
-import userGroupRoutes from './routes/userGroupRoutes';
 import authRoutes from './routes/authRoutes';
 import animalRoutes from './routes/animals';
 import animalSpeciesRoutes from './routes/animalSpecies';
 import tagRoutes from './routes/tagRoutes';
 import adminRoutes from './routes/adminRoutes';
 import debugRoutes from './routes/debugRoutes';
+import profileRoutes from './routes/profileRoutes';
 import { errorHandler } from './middleware/errorHandler';
 
 // Load environment variables
@@ -79,11 +79,11 @@ app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/permissions', permissionRoutes);
-app.use('/api/user-groups', userGroupRoutes);
 app.use('/api/animals', animalRoutes);
 app.use('/api/animal', animalSpeciesRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

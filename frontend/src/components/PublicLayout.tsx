@@ -2,8 +2,10 @@ import React from 'react';
 import { Box, Container, AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { Home as HomeIcon, Pets as PetsIcon, AdminPanelSettings as AdminIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../store/hooks';
 import LanguageSwitcher from './LanguageSwitcher';
+import UserMenu from './UserMenu';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -11,7 +13,8 @@ interface PublicLayoutProps {
 }
 
 const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { t } = useTranslation();
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
@@ -20,20 +23,34 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
         <Toolbar>
           <PetsIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Pet Management System
+            {t('home.title')}
           </Typography>
           <LanguageSwitcher />
-          {isAuthenticated && (
-            <Button 
-              color="inherit" 
+          {user && (
+            <Button
+              color="inherit"
               component={Link} 
               to="/admin"
               startIcon={<AdminIcon />}
               sx={{ ml: 2 }}
             >
-              Admin
+              {t('common.admin')}
             </Button>
           )}
+          
+          {user ? (
+            <UserMenu />
+          ) : (
+            <Button 
+              color="inherit" 
+              component={Link} 
+              to="/login"
+              sx={{ ml: 2 }}
+            >
+              {t('common.login')}
+            </Button>
+          )}
+          
           <Button 
             color="inherit" 
             component={Link} 
@@ -41,7 +58,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
             startIcon={<HomeIcon />}
             sx={{ ml: 2 }}
           >
-            Domů
+            {t('common.home')}
           </Button>
         </Toolbar>
       </AppBar>
@@ -75,7 +92,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
       >
         <Container maxWidth="lg">
           <Typography variant="body2">
-            © 2025 Pet Management System
+            {t('home.footer')}
           </Typography>
         </Container>
       </Box>

@@ -44,4 +44,3 @@ router.get('/users/:userId/effective-permissions', auth_1.authenticateToken, use
 router.get('/users/:userId/effective-permissions-enhanced', auth_1.authenticateToken, userGroupController_1.userGroupController.getUserEffectivePermissionsEnhanced);
 router.post('/users/:userId/resync-permissions', auth_1.authenticateToken, userGroupController_1.userGroupController.resyncUserPermissions);
 exports.default = router;
-//# sourceMappingURL=userGroupRoutes.js.map

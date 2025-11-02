@@ -93,4 +93,3 @@ const deleteImageFile = (filePath) => {
 };
 exports.deleteImageFile = deleteImageFile;
 exports.default = exports.uploadAnimalImages;
-//# sourceMappingURL=upload.js.map

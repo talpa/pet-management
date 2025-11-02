@@ -62,4 +62,3 @@ GroupPermission.init({
         },
     ],
 });
-//# sourceMappingURL=GroupPermission.js.map

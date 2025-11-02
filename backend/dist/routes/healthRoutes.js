@@ -14,4 +14,3 @@ router.get('/', (req, res) => {
     });
 });
 exports.default = router;
-//# sourceMappingURL=healthRoutes.js.map

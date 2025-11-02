@@ -60,4 +60,3 @@ UserGroup.init({
         },
     ],
 });
-//# sourceMappingURL=UserGroup.js.map

@@ -17,17 +17,36 @@ require("./models/animalAssociations");
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const healthRoutes_1 = __importDefault(require("./routes/healthRoutes"));
 const permissions_1 = __importDefault(require("./routes/permissions"));
-const userGroupRoutes_1 = __importDefault(require("./routes/userGroupRoutes"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const animals_1 = __importDefault(require("./routes/animals"));
 const animalSpecies_1 = __importDefault(require("./routes/animalSpecies"));
+const tagRoutes_1 = __importDefault(require("./routes/tagRoutes"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const debugRoutes_1 = __importDefault(require("./routes/debugRoutes"));
+const profileRoutes_1 = __importDefault(require("./routes/profileRoutes"));
 const errorHandler_1 = require("./middleware/errorHandler");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-app.use((0, helmet_1.default)());
+app.use((0, helmet_1.default)({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            imgSrc: ["'self'", "data:", "http:", "https:"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+            scriptSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+        },
+    },
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use((0, cors_1.default)({
-    origin: process.env.CLIENT_URL || 'http://localhost:3300',
+    origin: [
+        process.env.CLIENT_URL || 'http://localhost:3300',
+        'http://localhost:8080',
+        'http://localhost:3000'
+    ],
     credentials: true,
 }));
 app.use((0, morgan_1.default)('combined'));
@@ -47,13 +66,16 @@ app.use((0, express_session_1.default)({
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
+app.use('/api/debug', debugRoutes_1.default);
 app.use('/api/health', healthRoutes_1.default);
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api/users', userRoutes_1.default);
 app.use('/api/permissions', permissions_1.default);
-app.use('/api/user-groups', userGroupRoutes_1.default);
 app.use('/api/animals', animals_1.default);
 app.use('/api/animal', animalSpecies_1.default);
+app.use('/api/tags', tagRoutes_1.default);
+app.use('/api/admin', adminRoutes_1.default);
+app.use('/api/profile', profileRoutes_1.default);
 app.use(errorHandler_1.errorHandler);
 app.use('*', (req, res) => {
     res.status(404).json({
@@ -67,15 +89,18 @@ const startServer = async () => {
         console.log('Database connection established successfully.');
         await database_1.sequelize.sync({ force: false });
         console.log('Database synchronized successfully.');
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
+        if (process.env.VERCEL !== '1') {
+            app.listen(PORT, () => {
+                console.log(`Server is running on port ${PORT}`);
+            });
+        }
     }
     catch (error) {
         console.error('Unable to start server:', error);
-        process.exit(1);
+        if (process.env.VERCEL !== '1') {
+            process.exit(1);
+        }
     }
 };
 startServer();
 exports.default = app;
-//# sourceMappingURL=server.js.map

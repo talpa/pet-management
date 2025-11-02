@@ -39,4 +39,3 @@ Permission.init({
     tableName: 'permissions',
     timestamps: true,
 });
-//# sourceMappingURL=Permission.js.map

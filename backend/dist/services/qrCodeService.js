@@ -121,4 +121,3 @@ QRCodeService.DEFAULT_OPTIONS = {
     errorCorrectionLevel: 'M'
 };
 exports.default = QRCodeService;
-//# sourceMappingURL=qrCodeService.js.map

@@ -167,4 +167,3 @@ const getPermissionCategories = async (req, res, next) => {
     }
 };
 exports.getPermissionCategories = getPermissionCategories;
-//# sourceMappingURL=permissionController.js.map

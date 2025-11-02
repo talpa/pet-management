@@ -28,8 +28,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "react-scripts test",
+    "build": "react-scripts build",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:components": "jest components",
+    "test:integration": "jest --testNamePattern=integration",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -52,7 +56,12 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
-    "@types/jest": "^29.5.8"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.8",
+    "jest-environment-jsdom": "^30.2.0",
+    "ts-jest": "^29.4.5"
   },
   "proxy": "http://backend:4444"
 }

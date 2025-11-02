@@ -328,11 +328,9 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       const response = await apiClient.get(`/animals?${params}`);
       let allAnimals = response.data.data;
       
-      // Pro běžné uživatele filtrujeme jen svá zvířata na frontendu
-      if (currentUser && currentUser.role !== 'admin') {
-        allAnimals = allAnimals.filter((animal: any) => animal.ownerId === currentUser.id);
-        console.log(`Filtered to ${allAnimals.length} animals for user ${currentUser.id}`);
-      }
+      // AnimalManagement je používána jen pro adminské rozhraní (requireAdmin={true})
+      // Takže administrátoři vidí všechna zvířata bez filtrování
+      console.log(`Loaded ${allAnimals.length} animals for admin interface`);
       
       setAnimals(allAnimals);
       setTotalPages(response.data.pagination.totalPages);

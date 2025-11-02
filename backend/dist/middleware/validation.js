@@ -12,8 +12,12 @@ exports.validateUser = [
         .normalizeEmail()
         .withMessage('Please provide a valid email'),
     (0, express_validator_1.body)('phone')
-        .optional()
-        .isMobilePhone('any')
+        .custom((value) => {
+        if (!value || value.trim() === '') {
+            return true;
+        }
+        return /^[\+]?[1-9][\d]{0,15}$/.test(value) || /^[\d\s\-\+\(\)]{7,}$/.test(value);
+    })
         .withMessage('Please provide a valid phone number'),
     (0, express_validator_1.body)('company')
         .optional()
@@ -22,8 +26,8 @@ exports.validateUser = [
         .withMessage('Company name must not exceed 100 characters'),
     (0, express_validator_1.body)('role')
         .trim()
-        .notEmpty()
-        .withMessage('Role is required'),
+        .isIn(['user', 'admin'])
+        .withMessage('Role must be either user or admin'),
     (0, express_validator_1.body)('status')
         .optional()
         .isIn(['active', 'inactive'])
@@ -41,4 +45,3 @@ exports.validateUser = [
         next();
     },
 ];
-//# sourceMappingURL=validation.js.map

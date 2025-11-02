@@ -73,20 +73,21 @@ const MyAnimalsPage: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      // Načteme všechna zvířata a pak filtrujeme na frontendu
       console.log('Loading animals for user:', user);
-      const response = await apiClient.get('/animals?page=1&limit=100&sortBy=name&sortOrder=ASC');
-      const allAnimals = response.data.data || [];
       
-      // Pro admina: zobrazíme všechna zvířata
-      // Pro běžné uživatele: filtrujeme jen jeho zvířata
-      let filteredAnimals = allAnimals;
-      if (user && user.role !== 'admin') {
-        filteredAnimals = allAnimals.filter((animal: Animal) => animal.ownerId === user.id);
-        console.log(`Filtered ${allAnimals.length} animals to ${filteredAnimals.length} for user ${user.id}`);
+      // Pro admina: načteme všechna zvířata
+      // Pro běžné uživatele: použijeme nový endpoint /animals/my
+      let response;
+      if (user && user.role === 'admin') {
+        response = await apiClient.get('/animals?page=1&limit=100&sortBy=name&sortOrder=ASC');
+      } else {
+        response = await apiClient.get('/animals/my?page=1&limit=100&sortBy=name&sortOrder=ASC');
       }
       
-      setAnimals(filteredAnimals);
+      const animals = response.data.data || [];
+      console.log(`Loaded ${animals.length} animals from backend`);
+      
+      setAnimals(animals);
     } catch (err: any) {
       console.error('Failed to load my animals:', err);
       setError('Nepodařilo se načíst vaše zvířata');

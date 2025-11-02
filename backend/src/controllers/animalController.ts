@@ -87,17 +87,13 @@ export class AnimalController {
         },
       ];
 
-      // Permission check - if not admin, only show own animals
-      const isAdmin = user && user.role === 'admin';
-      if (!isAdmin && user) {
-        whereClause.ownerId = user.id;
-      }
-
-      // If no user and not admin, only show public animals (for public gallery)
-      if (!user) {
-        // For public access, we can show all animals or implement specific public logic
-        // For now, let's allow public access to view all animals
-      }
+      // /animals endpoint is always public and shows all animals
+      // This is used for:
+      // 1. Public gallery on homepage (all animals visible to everyone)
+      // 2. Admin management interface (admins need to see all animals)
+      // 3. For user-specific animals, use /animals/my endpoint instead
+      
+      // No user-based filtering here - this endpoint is public
 
       if (search) {
         whereClause[Op.or] = [
@@ -110,7 +106,8 @@ export class AnimalController {
         whereClause.speciesId = speciesId;
       }
 
-      if (ownerId && isAdmin) {
+      if (ownerId) {
+        // Allow filtering by ownerId for admin interface or specific use cases
         whereClause.ownerId = ownerId;
       }
 
@@ -186,6 +183,150 @@ export class AnimalController {
       res.status(500).json({
         success: false,
         message: 'Error fetching animals',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  // Get authenticated user's own animals
+  static async getMyAnimals(req: Request, res: Response) {
+    try {
+      const { 
+        page = 1, 
+        limit = 20, 
+        search, 
+        speciesId, 
+        gender, 
+        tags, 
+        sortBy = 'created_at', 
+        sortOrder = 'DESC' 
+      } = req.query;
+      const user = (req as any).user;
+      const offset = (Number(page) - 1) * Number(limit);
+
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Authentication required',
+        });
+      }
+
+      let whereClause: any = { 
+        isActive: true,
+        ownerId: user.id // Only user's own animals
+      };
+
+      let includeClause: any[] = [
+        {
+          model: AnimalSpecies,
+          as: 'species',
+          attributes: ['id', 'name', 'scientificName', 'category'],
+        },
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['id', 'name', 'email'],
+        },
+        {
+          model: AnimalProperty,
+          as: 'properties',
+        },
+        {
+          model: AnimalImage,
+          as: 'images',
+          required: false,
+        },
+        {
+          model: AnimalTag,
+          as: 'tags',
+          through: { attributes: [] },
+          required: false,
+        },
+      ];
+
+      // Search filter
+      if (search) {
+        whereClause[Op.or] = [
+          { name: { [Op.iLike]: `%${search}%` } },
+          { description: { [Op.iLike]: `%${search}%` } }
+        ];
+      }
+
+      // Species filter
+      if (speciesId) {
+        whereClause.speciesId = speciesId;
+      }
+
+      // Gender filter
+      if (gender) {
+        whereClause.gender = gender;
+      }
+
+      // Tag filtering
+      if (tags) {
+        let tagArray: string[];
+        if (Array.isArray(tags)) {
+          tagArray = tags as string[];
+        } else {
+          tagArray = (tags as string).split(',').map(tag => tag.trim());
+        }
+        if (tagArray.length > 0) {
+          const tagRecords = await AnimalTag.findAll({
+            where: { name: { [Op.in]: tagArray as string[] } },
+            attributes: ['id']
+          });
+          
+          if (tagRecords.length > 0) {
+            const tagIds = tagRecords.map(tag => tag.id);
+            const animalTagAssignments = await AnimalTagAssignment.findAll({
+              where: { tagId: { [Op.in]: tagIds } },
+              attributes: ['animalId']
+            });
+            
+            const animalIds = [...new Set(animalTagAssignments.map(ata => ata.animalId))];
+            if (animalIds.length > 0) {
+              whereClause.id = { [Op.in]: animalIds };
+            } else {
+              whereClause.id = { [Op.in]: [] };
+            }
+          } else {
+            whereClause.id = { [Op.in]: [] };
+          }
+        }
+      }
+
+      // Validate sort parameters
+      const validSortFields = ['created_at', 'updated_at', 'name', 'birthDate'];
+      const validSortOrders = ['ASC', 'DESC'];
+      const finalSortBy = validSortFields.includes(sortBy as string) ? sortBy as string : 'created_at';
+      const finalSortOrder = validSortOrders.includes((sortOrder as string).toUpperCase()) ? (sortOrder as string).toUpperCase() : 'DESC';
+
+      const { count, rows: animals } = await Animal.findAndCountAll({
+        where: whereClause,
+        include: includeClause,
+        order: [[finalSortBy, finalSortOrder]],
+        limit: Number(limit),
+        offset,
+        distinct: true,
+      });
+
+      console.log(`User ${user.id} (${user.name}) requested their animals: found ${count} animals`);
+
+      res.json({
+        success: true,
+        data: animals.map(transformAnimalData),
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total: count,
+          pages: Math.ceil(count / Number(limit)),
+        },
+      });
+    } catch (error) {
+      console.error('Error fetching user animals:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error fetching your animals',
         error: error instanceof Error ? error.message : 'Unknown error',
       });
     }

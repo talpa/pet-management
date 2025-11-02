@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/User';
 import { Op } from 'sequelize';
+import bcrypt from 'bcryptjs';
 
 interface PaginationQuery {
   page?: string;
@@ -144,6 +145,59 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     res.json({
       success: true,
       message: 'User deleted successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changeUserPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      res.status(400).json({
+        success: false,
+        message: 'Password is required',
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long',
+      });
+      return;
+    }
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+      return;
+    }
+
+    // Pouze pro klasické uživatele (ne OAuth)
+    if (user.provider !== 'local') {
+      res.status(400).json({
+        success: false,
+        message: 'Cannot change password for OAuth users',
+      });
+      return;
+    }
+
+    // Hash nové heslo
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    await user.update({ password: hashedPassword });
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully',
     });
   } catch (error) {
     next(error);

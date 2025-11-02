@@ -82,4 +82,3 @@ AnimalImage.init({
     updatedAt: false,
 });
 exports.default = AnimalImage;
-//# sourceMappingURL=AnimalImage.js.map

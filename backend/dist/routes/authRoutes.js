@@ -22,4 +22,3 @@ router.post('/verify', authController_1.verifyToken);
 router.post('/login', authController_1.classicLogin);
 router.post('/register', authController_1.classicRegister);
 exports.default = router;
-//# sourceMappingURL=authRoutes.js.map

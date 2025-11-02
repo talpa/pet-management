@@ -40,6 +40,38 @@ User.init({
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
     },
+    address: {
+        type: sequelize_1.DataTypes.TEXT,
+        allowNull: true,
+    },
+    viber: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
+    whatsapp: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
+    signal: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
+    facebook: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
+    instagram: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
+    twitter: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
+    linkedin: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
+    },
     role: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
@@ -97,4 +129,3 @@ User.init({
         },
     ],
 });
-//# sourceMappingURL=User.js.map
