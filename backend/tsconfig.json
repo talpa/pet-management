@@ -20,7 +20,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "noEmitOnError": false,
+    "suppressImplicitAnyIndexErrors": true
   },
   "include": [
     "src/**/*"
@@ -30,5 +32,8 @@
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  "ts-node": {
+    "transpileOnly": true
+  }
 }
