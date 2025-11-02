@@ -10,6 +10,7 @@ import {
   classicRegister,
 } from '../controllers/authController';
 import { authenticateToken } from '../middleware/auth';
+import { auditMiddleware } from '../middleware/auditMiddleware';
 import { Request, Response, NextFunction } from 'express';
 
 const router = Router();
@@ -44,12 +45,12 @@ router.get('/facebook/callback',
 );
 
 // Protected routes
-router.get('/user', authenticateToken, getCurrentUser);
-router.post('/logout', logout);
-router.post('/verify', verifyToken);
+router.get('/user', authenticateToken, auditMiddleware('GET_CURRENT_USER', 'auth'), getCurrentUser);
+router.post('/verify', auditMiddleware('VERIFY_TOKEN', 'auth'), verifyToken);
 
 // Classic authentication routes
-router.post('/login', classicLogin);
-router.post('/register', classicRegister);
+router.post('/login', auditMiddleware('USER_LOGIN', 'auth'), classicLogin);
+router.post('/register', auditMiddleware('USER_REGISTER', 'auth'), classicRegister);
+router.post('/logout', auditMiddleware('USER_LOGOUT', 'auth'), logout);
 
 export default router;

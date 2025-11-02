@@ -1,6 +1,8 @@
 import { User } from './User';
 import { Permission } from './Permission';
 import { UserPermission } from './UserPermission';
+import { AuditLog } from './AuditLog';
+import { Statistics } from './Statistics';
 
 // User <-> Permission associations (direct)
 User.belongsToMany(Permission, {
@@ -44,4 +46,15 @@ UserPermission.belongsTo(User, {
   as: 'grantedByUser',
 });
 
-export { User, Permission, UserPermission };
+// AuditLog associations
+AuditLog.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+User.hasMany(AuditLog, {
+  foreignKey: 'userId',
+  as: 'auditLogs',
+});
+
+export { User, Permission, UserPermission, AuditLog, Statistics };

@@ -66,6 +66,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
               <Button color="inherit" component={Link} to="/animal-species">
                 {t('navigation.animalSpecies')}
               </Button>
+              <Button color="inherit" component={Link} to="/statistics">
+                Statistiky
+              </Button>
             </>
           )}
           

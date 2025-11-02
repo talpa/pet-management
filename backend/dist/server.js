@@ -24,6 +24,8 @@ const tagRoutes_1 = __importDefault(require("./routes/tagRoutes"));
 const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
 const debugRoutes_1 = __importDefault(require("./routes/debugRoutes"));
 const profileRoutes_1 = __importDefault(require("./routes/profileRoutes"));
+const statistics_1 = __importDefault(require("./routes/statistics"));
+const auditMiddleware_1 = require("./middleware/auditMiddleware");
 const errorHandler_1 = require("./middleware/errorHandler");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -66,6 +68,7 @@ app.use((0, express_session_1.default)({
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
+app.use((0, auditMiddleware_1.auditMiddleware)());
 app.use('/api/debug', debugRoutes_1.default);
 app.use('/api/health', healthRoutes_1.default);
 app.use('/api/auth', authRoutes_1.default);
@@ -76,6 +79,7 @@ app.use('/api/animal', animalSpecies_1.default);
 app.use('/api/tags', tagRoutes_1.default);
 app.use('/api/admin', adminRoutes_1.default);
 app.use('/api/profile', profileRoutes_1.default);
+app.use('/api/statistics', statistics_1.default);
 app.use(errorHandler_1.errorHandler);
 app.use('*', (req, res) => {
     res.status(404).json({

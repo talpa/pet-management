@@ -4,6 +4,7 @@ import HomePage from './components/HomePage';
 import AdminDashboard from './components/AdminDashboard';
 import UserManagement from './components/UserManagement';
 import UserPermissionsManagement from './components/UserPermissionsManagement';
+import StatisticsDashboard from './components/StatisticsDashboard';
 
 import AnimalSpeciesManagement from './components/AnimalSpeciesManagement';
 import AnimalManagement from './components/AnimalManagement';
@@ -115,6 +116,16 @@ function App() {
             <ProtectedRoute>
               <AdminLayout requireAdmin={true}>
                 <AnimalSpeciesManagement />
+              </AdminLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/statistics" 
+          element={
+            <ProtectedRoute>
+              <AdminLayout requireAdmin={true}>
+                <StatisticsDashboard />
               </AdminLayout>
             </ProtectedRoute>
           } 

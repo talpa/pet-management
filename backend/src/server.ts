@@ -19,6 +19,10 @@ import tagRoutes from './routes/tagRoutes';
 import adminRoutes from './routes/adminRoutes';
 import debugRoutes from './routes/debugRoutes';
 import profileRoutes from './routes/profileRoutes';
+import statisticsRoutes from './routes/statistics';
+import scheduledTasksRoutes from './routes/scheduledTasks';
+import { auditMiddleware } from './middleware/auditMiddleware';
+import scheduledTasksService from './services/scheduledTasksService';
 import { errorHandler } from './middleware/errorHandler';
 
 // Load environment variables
@@ -73,6 +77,9 @@ app.use(passport.session());
 // Static file serving for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Global audit middleware (loguje všechny requests)
+app.use(auditMiddleware());
+
 // Routes
 app.use('/api/debug', debugRoutes);
 app.use('/api/health', healthRoutes);
@@ -84,6 +91,8 @@ app.use('/api/animal', animalSpeciesRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/statistics', statisticsRoutes);
+app.use('/api/tasks', scheduledTasksRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
@@ -105,6 +114,11 @@ const startServer = async () => {
     // Sync database models
     await sequelize.sync({ force: false });
     console.log('Database synchronized successfully.');
+    
+    // Initialize scheduled tasks
+    if (process.env.ENABLE_SCHEDULED_TASKS !== 'false') {
+      scheduledTasksService.initializeTasks();
+    }
     
     // Only start HTTP server if not in serverless environment
     if (process.env.VERCEL !== '1') {
