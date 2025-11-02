@@ -137,11 +137,11 @@ export const logUserAction = (action: string, resource: string) => {
   return auditMiddleware(action, resource);
 };
 
-// Middleware pro logování admin actions
+// Middleware pre logování admin actions
 export const logAdminAction = (action: string, resource: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    // Ověřím admin role
-    if (!(req as any).user?.isAdmin) {
+    // Ověřím admin role (používám správne pole role)
+    if (!(req as any).user || (req as any).user.role !== 'admin') {
       return res.status(403).json({ message: 'Admin access required' });
     }
     
