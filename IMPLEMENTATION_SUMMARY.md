@@ -119,7 +119,7 @@ http://localhost:3300
 http://localhost:3300/statistics
 
 # API dokumentácia
-http://localhost:5000/api-docs
+http://localhost:4444/api-docs
 ```
 
 **Projekt je kompletne funkčný a pripravený na používanie!** 🎉

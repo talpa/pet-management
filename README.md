@@ -74,7 +74,7 @@ docker-compose logs -f
 
 **Aplikace budou dostupné na:**
 - Frontend: http://localhost:3300
-- Backend API: http://localhost:5000
+- Backend API: http://localhost:4444
 - PostgreSQL: localhost:5432
 
 ### 2. Lokální development
@@ -128,7 +128,7 @@ Pro debug backend v Docker kontejneru je potřeba upravit `docker-compose.yml`:
 backend:
   # ... ostatní konfigurace
   ports:
-    - "5000:5000"
+    - "4444:4444"
     - "9229:9229"  # Debug port
   command: npm run dev:debug
 ```
@@ -145,7 +145,7 @@ A přidat do `backend/package.json`:
 ## 📊 API Dokumentace
 
 Backend poskytuje Swagger dokumentaci dostupnou na:
-- http://localhost:5000/api-docs
+- http://localhost:4444/api-docs
 
 ### Hlavní API endpointy:
 
@@ -204,7 +204,7 @@ npm run lint                      # Kontrola kódu
 
 ### Frontend se nespustí
 - Zkontrolujte, zda jsou nainstalovány závislosti: `cd frontend && npm install --legacy-peer-deps`
-- Ověřte, že backend běží na portu 5000
+- Ověřte, že backend běží na portu 4444
 
 ### Backend se nespustí
 - Zkontrolujte připojení k databázi
@@ -222,14 +222,43 @@ npm run lint                      # Kontrola kódu
 
 ## 📝 TODO / Budoucí vylepšení
 
-- [ ] Autentifikace a autorizace (JWT)
+- [x] Autentifikace a autorizace (JWT) ✅
+- [x] Kompletní uživatelské profily s kontaktními údaji ✅
+- [x] Admin panel pro správu uživatelů a oprávnění ✅
+- [x] Audit logging a systémové statistiky ✅
 - [ ] Unit a integration testy
 - [ ] CI/CD pipeline
 - [ ] Production Docker konfigurace
-- [ ] Monitoring a logging
 - [ ] API rate limiting
 - [ ] Caching layer (Redis)
 - [ ] File upload functionality
+
+## 🔍 Audit Logging & Statistiky
+
+Aplikace obsahuje kompletní audit logging systém:
+
+### ✨ Funkcionalita
+- **Automatické logování** všech HTTP requests
+- **User action tracking** s IP adresami a session management
+- **Systémové statistiky** - uživatelé, zvířata, návštěvnost
+- **Scheduled tasks** pro cleanup a agregaci dat
+- **Admin dashboard** s detailními analytics
+
+### 📊 Přístup ke statistikám
+- URL: `/statistics` (pouze pro adminy)
+- Menu: Admin → Statistiky
+- 4 hlavní záložky: Systém, Návštěvnost, Zvířata, Lokace
+
+### ⚙️ API Endpointy
+```bash
+GET /api/statistics/system           # Systémové statistiky
+GET /api/statistics/page-visits      # Návštěvnost stránek
+GET /api/statistics/animals          # Statistiky zvířat
+GET /api/statistics/locations        # Lokace uživatelů
+GET /api/tasks/status                # Stav scheduled tasks
+```
+
+Detailní dokumentace: [AUDIT_LOGGING.md](AUDIT_LOGGING.md)
 
 ## 👥 Přispívání
 

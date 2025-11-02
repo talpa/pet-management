@@ -25,11 +25,13 @@ const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
 const debugRoutes_1 = __importDefault(require("./routes/debugRoutes"));
 const profileRoutes_1 = __importDefault(require("./routes/profileRoutes"));
 const statistics_1 = __importDefault(require("./routes/statistics"));
+const scheduledTasks_1 = __importDefault(require("./routes/scheduledTasks"));
 const auditMiddleware_1 = require("./middleware/auditMiddleware");
+const scheduledTasksService_1 = __importDefault(require("./services/scheduledTasksService"));
 const errorHandler_1 = require("./middleware/errorHandler");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4444;
 app.use((0, helmet_1.default)({
     contentSecurityPolicy: {
         directives: {
@@ -80,6 +82,7 @@ app.use('/api/tags', tagRoutes_1.default);
 app.use('/api/admin', adminRoutes_1.default);
 app.use('/api/profile', profileRoutes_1.default);
 app.use('/api/statistics', statistics_1.default);
+app.use('/api/tasks', scheduledTasks_1.default);
 app.use(errorHandler_1.errorHandler);
 app.use('*', (req, res) => {
     res.status(404).json({
@@ -93,6 +96,9 @@ const startServer = async () => {
         console.log('Database connection established successfully.');
         await database_1.sequelize.sync({ force: false });
         console.log('Database synchronized successfully.');
+        if (process.env.ENABLE_SCHEDULED_TASKS !== 'false') {
+            scheduledTasksService_1.default.initializeTasks();
+        }
         if (process.env.VERCEL !== '1') {
             app.listen(PORT, () => {
                 console.log(`Server is running on port ${PORT}`);
