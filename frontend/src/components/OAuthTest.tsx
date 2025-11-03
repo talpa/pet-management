@@ -1,5 +1,4 @@
-import React from 'react';
-export {}; // Ensure this is treated as a module
+import React from 'react'; // Ensure this is treated as a module
 import {
   Box,
   Paper,
@@ -11,6 +10,7 @@ import {
 } from '@mui/material';
 import { Google, Facebook } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+export {};
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4444/api';
 

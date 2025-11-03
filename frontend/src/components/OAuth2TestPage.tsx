@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-export {}; // Ensure this is treated as a module
+import React, { useState } from 'react'; // Ensure this is treated as a module
 import {
   Box,
   Typography,
@@ -24,6 +23,7 @@ import {
   Check as CheckIcon,
   Info as InfoIcon,
 } from '@mui/icons-material';
+export {};
 
 const OAuth2TestPage: React.FC = () => {
   const [testResults, setTestResults] = useState<string[]>([]);

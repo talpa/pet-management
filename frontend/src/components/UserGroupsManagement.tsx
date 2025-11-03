@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-export {}; // Ensure this is treated as a module
+import React, { useState, useEffect } from 'react'; // Ensure this is treated as a module
 import {
   Box,
   Typography,
@@ -43,6 +42,7 @@ import {
 import { useAppDispatch } from '../store/hooks';
 import { setSnackbar } from '../store/slices/notificationSlice';
 import apiClient from '../services/api';
+export {};
 
 interface UserGroup {
   id: number;
