@@ -1,1 +1,0 @@
-{"version":3,"file":"animalAssociations.d.ts","sourceRoot":"","sources":["../../src/models/animalAssociations.ts"],"names":[],"mappings":"AAAA,OAAO,aAAa,MAAM,iBAAiB,CAAC;AAC5C,OAAO,eAAe,MAAM,mBAAmB,CAAC;AAChD,OAAO,MAAM,MAAM,UAAU,CAAC;AAC9B,OAAO,cAAc,MAAM,kBAAkB,CAAC;AAC9C,OAAO,WAAW,MAAM,eAAe,CAAC;AAmFxC,OAAO,EACL,aAAa,EACb,eAAe,EACf,MAAM,EACN,cAAc,EACd,WAAW,GACZ,CAAC"}

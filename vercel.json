@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "cd frontend && npm ci && npm run build",
   "outputDirectory": "frontend/build",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "cd frontend && npm ci && cd ../api && npm ci",
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/api/handler.js"
     },
     {
       "src": "/(.*)",
@@ -14,7 +14,7 @@
     }
   ],
   "functions": {
-    "api/index.js": {
+    "api/handler.js": {
       "maxDuration": 30
     }
   },
