@@ -31,6 +31,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:vercel": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
