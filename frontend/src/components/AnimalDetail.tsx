@@ -22,6 +22,7 @@ import {
   Person as PersonIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import apiClient from '../services/api';
 import PublicLayout from './PublicLayout';
 import QRCodeDisplay from './QRCodeDisplay';
@@ -117,7 +118,10 @@ const AnimalDetail: React.FC = () => {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString();
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    const locale = i18n.language === 'cs' ? 'cs-CZ' : 'en-US';
+    return date.toLocaleDateString(locale);
   };
 
   const calculateAge = (birthDate?: string) => {

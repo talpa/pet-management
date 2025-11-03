@@ -41,7 +41,9 @@ const resources = {
         qrCodeAlt: 'QR kód pro profil zvířete',
         downloadQR: 'Stáhnout QR kód',
         share: 'Sdílet',
-        copyLink: 'Kopírovat odkaz'
+        copyLink: 'Kopírovat odkaz',
+        searchAndFilter: 'Vyhledávání a filtry',
+        controls: 'Ovládání'
       },
       navigation: {
         home: 'Domů',
@@ -273,9 +275,17 @@ const resources = {
           },
           profiles: {
             title: 'Veřejné profily',
-            description: 'Každé zvíře má svůj vlastní veřejný profil s fotografiami a informacemi.'
+            description: 'Každé zvíře má svůj vlastní veřejný profil s fotografiemi a informacemi.'
           }
         }
+      },
+      viewMode: {
+        gridTooltip: 'Kaskádový pohled',
+        listTooltip: 'Seznamový pohled'
+      },
+      search: {
+        searchMyAnimals: 'Hledat moje zvířata podle jména nebo popisu...',
+        searchAllAnimals: 'Hledat všechna zvířata podle jména nebo popisu...'
       }
     }
   },
@@ -317,7 +327,9 @@ const resources = {
         qrCodeAlt: 'QR code for animal profile',
         downloadQR: 'Download QR code',
         share: 'Share',
-        copyLink: 'Copy link'
+        copyLink: 'Copy link',
+        searchAndFilter: 'Search and filters',
+        controls: 'Controls'
       },
       navigation: {
         home: 'Home',
@@ -548,6 +560,14 @@ const resources = {
             description: 'Each animal has its own public profile with photos and information.'
           }
         }
+      },
+      viewMode: {
+        gridTooltip: 'Grid view',
+        listTooltip: 'List view'
+      },
+      search: {
+        searchMyAnimals: 'Search my animals by name or description...',
+        searchAllAnimals: 'Search all animals by name or description...'
       }
     }
   }

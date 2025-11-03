@@ -13,19 +13,32 @@ import {
   CircularProgress,
   Paper,
   Fab,
-  IconButton
+  IconButton,
+  TextField,
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  ListItemSecondaryAction,
+  Divider
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Pets as PetsIcon,
-  Visibility as VisibilityIcon
+  Visibility as VisibilityIcon,
+  Search as SearchIcon,
+  Clear as ClearIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import { useAppSelector } from '../store/hooks';
 import AdminLayout from './AdminLayout';
+import ViewModeToggle from './ViewModeToggle';
 import apiClient from '../services/api';
 
 interface AnimalSpecies {
@@ -63,10 +76,12 @@ const MyAnimalsPage: React.FC = () => {
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     loadMyAnimals();
-  }, []);
+  }, [searchTerm]); // Reload when search term changes
 
   const loadMyAnimals = async () => {
     try {
@@ -75,13 +90,25 @@ const MyAnimalsPage: React.FC = () => {
       
       console.log('Loading animals for user:', user);
       
+      // Build query parameters
+      const params = new URLSearchParams({
+        page: '1',
+        limit: '100',
+        sortBy: 'name',
+        sortOrder: 'ASC'
+      });
+      
+      if (searchTerm.trim()) {
+        params.append('search', searchTerm.trim());
+      }
+      
       // Pro admina: načteme všechna zvířata
       // Pro běžné uživatele: použijeme nový endpoint /animals/my
       let response;
       if (user && user.role === 'admin') {
-        response = await apiClient.get('/animals?page=1&limit=100&sortBy=name&sortOrder=ASC');
+        response = await apiClient.get(`/animals?${params.toString()}`);
       } else {
-        response = await apiClient.get('/animals/my?page=1&limit=100&sortBy=name&sortOrder=ASC');
+        response = await apiClient.get(`/animals/my?${params.toString()}`);
       }
       
       const animals = response.data.data || [];
@@ -125,7 +152,9 @@ const MyAnimalsPage: React.FC = () => {
     if (!dateString) return t('common.unknownDate');
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return t('common.invalidDate');
-    return date.toLocaleDateString(t('common.locale'));
+    // Use proper locale based on i18n language
+    const locale = i18n.language === 'cs' ? 'cs-CZ' : 'en-US';
+    return date.toLocaleDateString(locale);
   };
 
   const calculateAge = (birthDate?: string) => {
@@ -165,6 +194,49 @@ const MyAnimalsPage: React.FC = () => {
           </Alert>
         )}
 
+        {/* Search and View Controls */}
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="h6" component="h2">
+              {animals.length > 0 ? t('common.searchAndFilter') : t('common.controls')}
+            </Typography>
+            {animals.length > 0 && (
+              <ViewModeToggle
+                viewMode={viewMode}
+                onModeChange={setViewMode}
+                gridTooltip={t('viewMode.gridTooltip')}
+                listTooltip={t('viewMode.listTooltip')}
+              />
+            )}
+          </Box>
+          
+          <TextField
+            fullWidth
+            placeholder={isAdmin ? t('search.searchAllAnimals') : t('search.searchMyAnimals')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+              endAdornment: searchTerm && (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setSearchTerm('')}
+                    size="small"
+                    edge="end"
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            sx={{ mb: 2 }}
+          />
+        </Box>
+
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress size={50} />
@@ -194,135 +266,254 @@ const MyAnimalsPage: React.FC = () => {
                 </Button>
               </Paper>
             ) : (
-              <Grid container spacing={3}>
-                {animals.map((animal) => {
-                  const primaryImage = animal.images?.find(img => img.isPrimary) || animal.images?.[0];
-                  
-                  return (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={animal.id}>
-                      <Card 
-                        sx={{ 
-                          height: '100%', 
-                          display: 'flex', 
-                          flexDirection: 'column',
-                          transition: 'transform 0.2s, box-shadow 0.2s',
-                          cursor: 'pointer',
-                          '&:hover': {
-                            transform: 'translateY(-4px)',
-                            boxShadow: 4
-                          }
-                        }}
-                      >
-                        <CardActionArea 
-                          onClick={() => handleAnimalClick(animal)}
-                          sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
-                        >
-                          {primaryImage ? (
-                            <CardMedia
-                              component="img"
-                              height="200"
-                              image={primaryImage.url}
-                              alt={animal.name}
-                              sx={{ objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <Box
-                              sx={{
-                                height: 200,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                bgcolor: 'grey.200',
-                                color: 'grey.600'
-                              }}
-                            >
-                              <PetsIcon sx={{ fontSize: 60 }} />
-                            </Box>
-                          )}
-                          
-                          <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                            <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
-                              {animal.name}
-                            </Typography>
-                            
-                            <Box sx={{ mb: 2 }}>
-                              <Chip
-                                label={animal.species.name}
-                                size="small"
-                                color="primary"
-                                variant="outlined"
-                                sx={{ mr: 1, mb: 1 }}
-                              />
-                              <Chip
-                                label={animal.species.category}
-                                size="small"
-                                color="secondary"
-                                variant="outlined"
-                                sx={{ mb: 1 }}
-                              />
-                            </Box>
-                            
-                            {animal.birthDate && (
-                              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                📅 {calculateAge(animal.birthDate)}
-                              </Typography>
-                            )}
-                            
-                            {animal.gender && (
-                              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                ⚥ {animal.gender}
-                              </Typography>
-                            )}
-                            
-                            <Typography variant="caption" color="text.secondary">
-                              {t('common.addedOn')}: {formatDate(animal.created_at)}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                        
-                        {/* Action buttons */}
-                        <Box sx={{ p: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Box 
+              <>
+                {viewMode === 'grid' ? (
+                  <Grid container spacing={3}>
+                    {animals.map((animal) => {
+                      const primaryImage = animal.images?.find(img => img.isPrimary) || animal.images?.[0];
+                      
+                      return (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={animal.id}>
+                          <Card 
                             sx={{ 
+                              height: '100%', 
                               display: 'flex', 
-                              alignItems: 'center', 
-                              color: 'primary.main',
+                              flexDirection: 'column',
+                              transition: 'transform 0.2s, box-shadow 0.2s',
                               cursor: 'pointer',
-                              '&:hover': { color: 'primary.dark' }
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAnimalClick(animal);
+                              '&:hover': {
+                                transform: 'translateY(-4px)',
+                                boxShadow: 4
+                              }
                             }}
                           >
-                            <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                            <Typography variant="caption">
-                              {t('actions.viewDetail')}
-                            </Typography>
-                          </Box>
-                          
-                          <Box>
-                            <IconButton
-                              size="small"
-                              onClick={(e) => handleEditAnimal(animal.id, e)}
-                              sx={{ color: 'primary.main' }}
+                            <CardActionArea 
+                              onClick={() => handleAnimalClick(animal)}
+                              sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
                             >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={(e) => handleDeleteAnimal(animal.id, animal.name, e)}
-                              sx={{ color: 'error.main' }}
+                              {primaryImage ? (
+                                <CardMedia
+                                  component="img"
+                                  height="200"
+                                  image={primaryImage.url}
+                                  alt={animal.name}
+                                  sx={{ objectFit: 'cover' }}
+                                />
+                              ) : (
+                                <Box
+                                  sx={{
+                                    height: 200,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    bgcolor: 'grey.200',
+                                    color: 'grey.600'
+                                  }}
+                                >
+                                  <PetsIcon sx={{ fontSize: 60 }} />
+                                </Box>
+                              )}
+                              
+                              <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                                <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                  {animal.name}
+                                </Typography>
+                                
+                                <Box sx={{ mb: 2 }}>
+                                  <Chip
+                                    label={animal.species.name}
+                                    size="small"
+                                    color="primary"
+                                    variant="outlined"
+                                    sx={{ mr: 1, mb: 1 }}
+                                  />
+                                  <Chip
+                                    label={animal.species.category}
+                                    size="small"
+                                    color="secondary"
+                                    variant="outlined"
+                                    sx={{ mb: 1 }}
+                                  />
+                                </Box>
+                                
+                                {animal.birthDate && (
+                                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                    📅 {calculateAge(animal.birthDate)}
+                                  </Typography>
+                                )}
+                                
+                                {animal.gender && (
+                                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                    ⚥ {animal.gender}
+                                  </Typography>
+                                )}
+                                
+                                <Typography variant="caption" color="text.secondary">
+                                  {t('common.addedOn')}: {formatDate(animal.created_at)}
+                                </Typography>
+                              </CardContent>
+                            </CardActionArea>
+                            
+                            {/* Action buttons */}
+                            <Box sx={{ p: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <Box 
+                                sx={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  color: 'primary.main',
+                                  cursor: 'pointer',
+                                  '&:hover': { color: 'primary.dark' }
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAnimalClick(animal);
+                                }}
+                              >
+                                <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                <Typography variant="caption">
+                                  {t('actions.viewDetail')}
+                                </Typography>
+                              </Box>
+                              
+                              <Box>
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => handleEditAnimal(animal.id, e)}
+                                  sx={{ color: 'primary.main' }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => handleDeleteAnimal(animal.id, animal.name, e)}
+                                  sx={{ color: 'error.main' }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              </Box>
+                            </Box>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                ) : (
+                  <Paper>
+                    <List>
+                      {animals.map((animal, index) => {
+                        const primaryImage = animal.images?.find(img => img.isPrimary) || animal.images?.[0];
+                        
+                        return (
+                          <React.Fragment key={animal.id}>
+                            <ListItem
+                              sx={{
+                                cursor: 'pointer',
+                                '&:hover': {
+                                  bgcolor: 'action.hover'
+                                }
+                              }}
+                              onClick={() => handleAnimalClick(animal)}
                             >
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Card>
-                    </Grid>
-                  );
-                })}
-              </Grid>
+                              <ListItemAvatar>
+                                <Avatar
+                                  src={primaryImage?.thumbnailUrl || primaryImage?.url}
+                                  sx={{ 
+                                    width: 60, 
+                                    height: 60, 
+                                    mr: 1,
+                                    bgcolor: primaryImage ? 'transparent' : 'grey.200'
+                                  }}
+                                >
+                                  {!primaryImage && <PetsIcon />}
+                                </Avatar>
+                              </ListItemAvatar>
+                              
+                              <ListItemText
+                                primary={
+                                  <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                                    <Typography variant="h6" component="span" sx={{ fontWeight: 'bold' }}>
+                                      {animal.name}
+                                    </Typography>
+                                    <Chip
+                                      label={animal.species.name}
+                                      size="small"
+                                      color="primary"
+                                      variant="outlined"
+                                    />
+                                    <Chip
+                                      label={animal.species.category}
+                                      size="small"
+                                      color="secondary"
+                                      variant="outlined"
+                                    />
+                                  </Box>
+                                }
+                                secondary={
+                                  <Box sx={{ mt: 1 }}>
+                                    {animal.description && (
+                                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                        {animal.description.length > 100 
+                                          ? `${animal.description.substring(0, 100)}...` 
+                                          : animal.description
+                                        }
+                                      </Typography>
+                                    )}
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
+                                      {animal.birthDate && (
+                                        <Typography variant="body2" color="text.secondary">
+                                          📅 {calculateAge(animal.birthDate)}
+                                        </Typography>
+                                      )}
+                                      {animal.gender && (
+                                        <Typography variant="body2" color="text.secondary">
+                                          ⚥ {animal.gender}
+                                        </Typography>
+                                      )}
+                                      <Typography variant="body2" color="text.secondary">
+                                        {t('common.addedOn')}: {formatDate(animal.created_at)}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                }
+                              />
+                              
+                              <ListItemSecondaryAction>
+                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAnimalClick(animal);
+                                    }}
+                                    sx={{ color: 'primary.main' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => handleEditAnimal(animal.id, e)}
+                                    sx={{ color: 'primary.main' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => handleDeleteAnimal(animal.id, animal.name, e)}
+                                    sx={{ color: 'error.main' }}
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                </Box>
+                              </ListItemSecondaryAction>
+                            </ListItem>
+                            {index < animals.length - 1 && <Divider />}
+                          </React.Fragment>
+                        );
+                      })}
+                    </List>
+                  </Paper>
+                )}
+              </>
             )}
           </>
         )}

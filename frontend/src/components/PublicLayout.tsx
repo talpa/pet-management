@@ -32,7 +32,17 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {t('home.title')}
           </Typography>
-          <LanguageSwitcher />
+          
+          <Button 
+            color="inherit" 
+            component={Link} 
+            to="/"
+            startIcon={<HomeIcon />}
+            sx={{ ml: 2 }}
+          >
+            {t('common.home')}
+          </Button>
+          
           {user && (
             <Button
               color="inherit"
@@ -45,9 +55,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
             </Button>
           )}
           
-          {user ? (
-            <UserMenu />
-          ) : (
+          {!user && (
             <Button 
               color="inherit" 
               component={Link} 
@@ -58,15 +66,9 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
             </Button>
           )}
           
-          <Button 
-            color="inherit" 
-            component={Link} 
-            to="/"
-            startIcon={<HomeIcon />}
-            sx={{ ml: 2 }}
-          >
-            {t('common.home')}
-          </Button>
+          <LanguageSwitcher />
+          
+          {user && <UserMenu />}
         </Toolbar>
       </AppBar>
 

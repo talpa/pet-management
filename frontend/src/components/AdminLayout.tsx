@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Container, AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Home as HomeIcon } from '@mui/icons-material';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../store/hooks';
@@ -42,8 +43,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {t('common.appName')} - {isAdmin ? t('common.admin') : t('navigation.myAccount')}
           </Typography>
-          <Button color="inherit" component={Link} to="/">
-            {t('navigation.publicPage')}
+          <Button color="inherit" component={Link} to="/" startIcon={<HomeIcon />}>
+            {t('common.home')}
           </Button>
           
           {/* Dynamický odkaz podle role uživatele */}

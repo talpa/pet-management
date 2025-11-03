@@ -23,7 +23,9 @@
     "view": "Zobrazit",
     "yes": "Ano",
     "no": "Ne",
-    "admin": "Administrace"
+    "admin": "Administrace",
+    "searchAndFilter": "Vyhledávání a filtry",
+    "controls": "Ovládání"
   },
   "auth": {
     "title": "Přihlášení",
@@ -427,5 +429,13 @@
     "expiresAt": "Platí do (volitelné)",
     "permanentPermission": "Ponechte prázdné pro trvalé oprávnění",
     "cancel": "Zrušit"
+  },
+  "viewMode": {
+    "gridTooltip": "Kaskádový pohled",
+    "listTooltip": "Seznamový pohled"
+  },
+  "search": {
+    "searchMyAnimals": "Hledat moje zvířata podle jména nebo popisu...",
+    "searchAllAnimals": "Hledat všechna zvířata podle jména nebo popisu..."
   }
 }

@@ -23,7 +23,9 @@
     "view": "View",
     "yes": "Yes",
     "no": "No",
-    "admin": "Administration"
+    "admin": "Administration",
+    "searchAndFilter": "Search and filters",
+    "controls": "Controls"
   },
   "auth": {
     "title": "Sign In",
@@ -427,5 +429,13 @@
       "active24h": "Active (24h)"
     },
     "loading": "Loading..."
+  },
+  "viewMode": {
+    "gridTooltip": "Grid view",
+    "listTooltip": "List view"
+  },
+  "search": {
+    "searchMyAnimals": "Search my animals by name or description...",
+    "searchAllAnimals": "Search all animals by name or description..."
   }
 }
