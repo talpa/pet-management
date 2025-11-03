@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Op } from 'sequelize';
 import { User } from '../models/User';
 import { OAuth2PermissionService } from '../services/oauth2PermissionService';
 
@@ -33,7 +34,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: `http://localhost:4444/api/auth/google/callback`,
+      callbackURL: `${process.env.BACKEND_URL || 'http://localhost:4444'}/api/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -89,20 +90,30 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID || '',
       clientSecret: process.env.FACEBOOK_APP_SECRET || '',
-      callbackURL: `http://localhost:4444/api/auth/facebook/callback`,
-      profileFields: ['id', 'displayName', 'emails', 'photos'],
+      callbackURL: `${process.env.BACKEND_URL || 'http://localhost:4444'}/api/auth/facebook/callback`,
+      profileFields: ['id', 'displayName', 'name', 'picture.type(large)'],
+      enableProof: true,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const email = profile.emails?.[0]?.value;
-        if (!email) {
-          return done(new Error('No email found in Facebook profile'), false);
-        }
+        console.log('Facebook profile received:', profile);
+        
+        // Pro Facebook nemusíme mít email - použijeme Facebook ID jako unikátní identifikátor
+        const facebookId = profile.id;
+        const displayName = profile.displayName || 
+                          `${profile.name?.givenName || ''} ${profile.name?.familyName || ''}`.trim() ||
+                          `Facebook User ${facebookId}`;
+        
+        // Vytvoříme "fake" email pro Facebook uživatele
+        const fakeEmail = `facebook_${facebookId}@facebook.local`;
 
-        // Check if user already exists
+        // Check if user already exists by Facebook ID or fake email
         let user = await User.findOne({
           where: {
-            email: email,
+            [Op.or]: [
+              { providerId: facebookId, provider: 'facebook' },
+              { email: fakeEmail }
+            ]
           },
         });
 
@@ -110,17 +121,17 @@ passport.use(
           // Update existing user with Facebook data
           await user.update({
             provider: 'facebook',
-            providerId: profile.id,
+            providerId: facebookId,
             avatar: profile.photos?.[0]?.value,
             refreshToken: refreshToken,
           });
         } else {
-          // Create new user
+          // Create new user with fake email
           user = await User.create({
-            name: profile.displayName,
-            email: email,
+            name: displayName,
+            email: fakeEmail,
             provider: 'facebook',
-            providerId: profile.id,
+            providerId: facebookId,
             avatar: profile.photos?.[0]?.value,
             refreshToken: refreshToken,
             role: 'user',
@@ -128,7 +139,7 @@ passport.use(
           });
         }
 
-        // Assign permissions based on email/domain
+        // Assign permissions based on user data
         await OAuth2PermissionService.assignPermissionsToUser(user);
 
         return done(null, user);

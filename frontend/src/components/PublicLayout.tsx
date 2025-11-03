@@ -19,7 +19,14 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       {/* Public Header */}
-      <AppBar position="static" sx={{ bgcolor: '#2e7d32' }}>
+      <AppBar 
+        position="static" 
+        sx={{ bgcolor: '#2e7d32' }}
+        component="nav" 
+        id="navigation"
+        role="navigation"
+        aria-label="Hlavní navigace"
+      >
         <Toolbar>
           <PetsIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -75,7 +82,14 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children, title }) => {
       )}
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container 
+        component="main"
+        id="main-content" 
+        maxWidth="lg" 
+        sx={{ py: 4 }}
+        role="main"
+        aria-label={title ? `${title} - hlavní obsah` : 'Hlavní obsah'}
+      >
         {children}
       </Container>
 

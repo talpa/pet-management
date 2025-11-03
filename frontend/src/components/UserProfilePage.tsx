@@ -226,23 +226,32 @@ const UserProfilePage: React.FC = () => {
   };
 
   if (loading) {
-    return <Box sx={{ p: 3 }}>Loading...</Box>;
+    return <Box sx={{ p: 3 }}>{t('common.loading')}</Box>;
   }
 
   if (!profile) {
-    return <Box sx={{ p: 3 }}>Profile not found</Box>;
+    return <Box sx={{ p: 3 }}>{t('profile.notFound')}</Box>;
   }
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Paper sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', p: 3 }}>
-          <Avatar sx={{ width: 80, height: 80, mr: 3 }}>
+          <Avatar 
+            sx={{ width: 80, height: 80, mr: 3 }}
+            title={profile.name}
+            aria-label={`${profile.name} profile picture`}
+          >
             {profile.avatar ? (
-              <img 
+              <Box
+                component="img"
                 src={profile.avatar} 
                 alt={profile.name} 
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                sx={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover' 
+                }}
               />
             ) : (
               <Person sx={{ fontSize: 40 }} />

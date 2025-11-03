@@ -336,7 +336,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       setTotalPages(response.data.pagination.totalPages);
       setError(null);
     } catch (err: any) {
-      setError(err.response?.data?.message || t('animals.errors.loadFailed'));
+      setError(err.response?.data?.message || t('animals.errors.loadFailed', 'Načítání zvířat selhalo'));
     } finally {
       setLoading(false);
     }
@@ -500,12 +500,12 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
 
       if (editingAnimal) {
         await apiClient.put(`/animals/${editingAnimal.id}`, payload);
-        setSuccess(t('animals.messages.updateSuccess'));
+        setSuccess(t('animals.messages.updateSuccess', 'Zvíře bylo úspěšně aktualizováno'));
         handleCloseDialog();
         loadAnimals();
       } else {
         const response = await apiClient.post('/animals', payload);
-        setSuccess(t('animals.messages.createSuccess'));
+        setSuccess(t('animals.messages.createSuccess', 'Zvíře bylo úspěšně zaregistrováno'));
         
         // In edit mode, navigate back to my animals after creation
         if (editMode === 'create') {
@@ -534,7 +534,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       } else if (err.response?.status === 404) {
         setError('Zvíře nebylo nalezeno.');
       } else {
-        setError(err.response?.data?.message || t('animals.errors.saveFailed'));
+        setError(err.response?.data?.message || t('animals.errors.saveFailed', 'Uložení zvířete selhalo'));
       }
     }
   };
@@ -542,11 +542,11 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
   const handleDelete = async (id: number) => {
     try {
       await apiClient.delete(`/animals/${id}`);
-      setSuccess(t('animals.messages.deleteSuccess'));
+      setSuccess(t('animals.messages.deleteSuccess', 'Zvíře bylo úspěšně smazáno'));
       setDeleteConfirmId(null);
       loadAnimals();
     } catch (err: any) {
-      setError(err.response?.data?.message || t('animals.errors.deleteFailed'));
+      setError(err.response?.data?.message || t('animals.errors.deleteFailed', 'Smazání zvířete selhalo'));
     }
   };
 
@@ -567,6 +567,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
     
     // Map backend format to frontend format
     const propertyName = property.propertyName || property.name || '';
+    const translatedPropertyName = t(`animalDetail.propertyNames.${propertyName}`, propertyName);
     const propertyType = property.propertyType || property.type;
     const isRequired = property.isRequired !== undefined ? property.isRequired : property.required;
     
@@ -609,14 +610,14 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 }))}
               />
             }
-            label={propertyName}
+            label={translatedPropertyName}
           />
         );
       
       case 'SELECT':
         return (
           <FormControl fullWidth>
-            <InputLabel>{propertyName}</InputLabel>
+            <InputLabel>{translatedPropertyName}</InputLabel>
             <Select
               value={value}
               onChange={(e) => setFormData(prev => ({
@@ -626,7 +627,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                   [property.id]: e.target.value,
                 },
               }))}
-              label={propertyName}
+              label={translatedPropertyName}
               required={isRequired}
             >
               {property.selectOptions?.map((option) => (
@@ -641,7 +642,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       case 'NUMBER':
         return (
           <TextField
-            label={propertyName}
+            label={translatedPropertyName}
             type="number"
             fullWidth
             value={value}
@@ -659,7 +660,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       case 'DATE':
         return (
           <TextField
-            label={propertyName}
+            label={translatedPropertyName}
             type="date"
             fullWidth
             value={value}
@@ -678,7 +679,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       default: // TEXT
         return (
           <TextField
-            label={propertyName}
+            label={translatedPropertyName}
             fullWidth
             value={value}
             onChange={(e) => setFormData(prev => ({
@@ -709,7 +710,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
         <>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h4" component="h1">
-              {t('animals.title')}
+              {t('animals.title', 'Správa zvířat')}
             </Typography>
             <Button
               variant="contained"
@@ -717,7 +718,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
               onClick={handleOpenCreate}
               disabled={loading}
             >
-              {t('animals.addNew')}
+              {t('animals.addNew', 'Přidat nové zvíře')}
             </Button>
           </Box>
 
@@ -760,7 +761,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
             <form onSubmit={handleSearch}>
               <TextField
                 fullWidth
-                placeholder={t('animals.searchPlaceholder')}
+                placeholder={t('animals.searchPlaceholder', 'Hledat zvířata podle jména...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 InputProps={{
@@ -775,16 +776,16 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
           </Grid>
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth>
-              <InputLabel>{t('animals.filterBySpecies')}</InputLabel>
+              <InputLabel>{t('animals.filterBySpecies', 'Filtrovat podle druhu')}</InputLabel>
               <Select
                 value={selectedSpeciesFilter}
                 onChange={(e) => {
                   setSelectedSpeciesFilter(e.target.value as number | '');
                   setPage(1);
                 }}
-                label={t('animals.filterBySpecies')}
+                label={t('animals.filterBySpecies', 'Filtrovat podle druhu')}
               >
-                <MenuItem value="">{t('animals.allSpecies')}</MenuItem>
+                <MenuItem value="">{t('animals.allSpecies', 'Všechny druhy')}</MenuItem>
                 {species.map((speciesItem) => (
                   <MenuItem key={speciesItem.id} value={speciesItem.id}>
                     {speciesItem.name} ({speciesItem.category})
@@ -840,12 +841,12 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 />
                 
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  {t('animals.owner')}: {animal.ownerName}
+                  {t('animals.owner', 'Majitel')}: {animal.ownerName}
                 </Typography>
                 
                 {animal.birthDate && (
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {t('animals.birthDate')}: {(() => {
+                    {t('animals.birthDate', 'Datum narození')}: {(() => {
                       const date = new Date(animal.birthDate);
                       return isNaN(date.getTime()) ? 'Neplatné datum' : date.toLocaleDateString('cs-CZ');
                     })()}
@@ -885,18 +886,30 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 )}
                 
                 <Typography variant="caption" color="text.secondary">
-                  {t('animals.propertiesCount', { count: animal.properties.length })}
+                  {t('animals.propertiesCount', '{{count}} vlastností', { count: animal.properties.length })}
                 </Typography>
               </CardContent>
               
               <CardActions>
-                <IconButton onClick={() => setViewingAnimal(animal)}>
+                <IconButton 
+                  onClick={() => setViewingAnimal(animal)}
+                  aria-label={`View ${animal.name}`}
+                  title={`Zobrazit ${animal.name}`}
+                >
                   <ViewIcon />
                 </IconButton>
-                <IconButton onClick={() => handleOpenEdit(animal)}>
+                <IconButton 
+                  onClick={() => handleOpenEdit(animal)}
+                  aria-label={`Edit ${animal.name}`}
+                  title={`Upravit ${animal.name}`}
+                >
                   <EditIcon />
                 </IconButton>
-                <IconButton onClick={() => setDeleteConfirmId(animal.id)}>
+                <IconButton 
+                  onClick={() => setDeleteConfirmId(animal.id)}
+                  aria-label={`Delete ${animal.name}`}
+                  title={`Smazat ${animal.name}`}
+                >
                   <DeleteIcon />
                 </IconButton>
               </CardActions>
@@ -928,7 +941,11 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                         sx={{ width: 40, height: 40 }}
                       />
                     ) : (
-                      <Avatar sx={{ width: 40, height: 40 }}>
+                      <Avatar 
+                        sx={{ width: 40, height: 40 }}
+                        title={animal.name}
+                        aria-label={`${animal.name} animal avatar`}
+                      >
                         <PetsIcon />
                       </Avatar>
                     )}
@@ -969,17 +986,29 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                   <TableCell>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Tooltip title="Zobrazit">
-                        <IconButton size="small" onClick={() => setViewingAnimal(animal)}>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => setViewingAnimal(animal)}
+                          aria-label={`View ${animal.name}`}
+                        >
                           <ViewIcon />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Upravit">
-                        <IconButton size="small" onClick={() => handleOpenEdit(animal)}>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleOpenEdit(animal)}
+                          aria-label={`Edit ${animal.name}`}
+                        >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Smazat">
-                        <IconButton size="small" onClick={() => setDeleteConfirmId(animal.id)}>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => setDeleteConfirmId(animal.id)}
+                          aria-label={`Delete ${animal.name}`}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
@@ -1015,8 +1044,8 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
       >
         <DialogTitle>
           {editingAnimal 
-            ? t('animals.editTitle') 
-            : t('animals.createTitle')
+            ? t('animals.editTitle', 'Upravit zvíře') 
+            : t('animals.createTitle', 'Zaregistrovat nové zvíře')
           }
           {!editingAnimal && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -1027,10 +1056,10 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
         <DialogContent>
           <Box sx={{ pt: 1 }}>
             <Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)} sx={{ mb: 3 }}>
-              <Tab label={t('animals.tabs.basic')} />
-              <Tab label={t('animals.tabs.seo')} />
-              {editingAnimal && <Tab label={t('animals.tabs.images')} />}
-              {editingAnimal && <Tab label={t('animals.tabs.qrCode')} />}
+              <Tab label={t('animals.tabs.basic', 'Základní informace')} />
+              <Tab label={t('animals.tabs.seo', 'SEO URL')} />
+              {editingAnimal && <Tab label={t('animals.tabs.images', 'Obrázky')} />}
+              {editingAnimal && <Tab label={t('animals.tabs.qrCode', 'QR Kód')} />}
             </Tabs>
 
             {/* Basic Information Tab */}
@@ -1038,7 +1067,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
               <Box>
                 <TextField
                   autoFocus
-                  label={t('animals.form.name')}
+                  label={t('animals.form.name', 'Jméno zvířete')}
                   fullWidth
                   value={formData.name}
                   onChange={(e) => {
@@ -1064,11 +1093,11 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 )}
                 
                 <FormControl fullWidth sx={{ mb: 2 }}>
-                  <InputLabel>{t('animals.form.species')}</InputLabel>
+                  <InputLabel>{t('animals.form.species', 'Druh zvířete')}</InputLabel>
                   <Select
                     value={formData.speciesId}
                     onChange={(e) => setFormData(prev => ({ ...prev, speciesId: e.target.value as number | '' }))}
-                    label={t('animals.form.species')}
+                    label={t('animals.form.species', 'Druh zvířete')}
                     required
                   >
                     {species.map((speciesItem) => (
@@ -1099,7 +1128,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 )}
                 
                 <TextField
-                  label={t('animals.form.birthDate')}
+                  label={t('animals.form.birthDate', 'Datum narození')}
                   type="date"
                   fullWidth
                   value={formData.birthDate}
@@ -1109,7 +1138,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 />
                 
                 <TextField
-                  label={t('animals.form.description')}
+                  label={t('animals.form.description', 'Popis')}
                   fullWidth
                   multiline
                   rows={3}
@@ -1128,7 +1157,7 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
                 {selectedSpecies && selectedSpecies.properties && selectedSpecies.properties.length > 0 && (
                   <>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                      {t('animals.form.speciesProperties')}
+                      {t('animals.form.speciesProperties', 'Vlastnosti druhu')}
                     </Typography>
                     <Grid container spacing={2}>
                       {selectedSpecies?.properties?.map((property) => (
@@ -1250,34 +1279,36 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
               )}
               
               <Typography variant="body1" sx={{ mb: 2 }}>
-                <strong>{t('animals.form.species')}:</strong> {viewingAnimal.species.name} ({viewingAnimal.species.category})
+                <strong>{t('animals.form.species', 'Druh zvířete')}:</strong> {viewingAnimal.species.name} ({viewingAnimal.species.category})
               </Typography>
               
               <Typography variant="body1" sx={{ mb: 2 }}>
-                <strong>{t('animals.owner')}:</strong> {viewingAnimal.ownerName}
+                <strong>{t('animals.owner', 'Majitel')}:</strong> {viewingAnimal.ownerName}
               </Typography>
               
               {viewingAnimal.birthDate && (
                 <Typography variant="body1" sx={{ mb: 2 }}>
-                  <strong>{t('animals.birthDate')}:</strong> {new Date(viewingAnimal.birthDate).toLocaleDateString()}
+                  <strong>{t('animals.birthDate', 'Datum narození')}:</strong> {new Date(viewingAnimal.birthDate).toLocaleDateString()}
                 </Typography>
               )}
               
               {viewingAnimal.description && (
                 <Typography variant="body1" sx={{ mb: 2 }}>
-                  <strong>{t('animals.form.description')}:</strong> {viewingAnimal.description}
+                  <strong>{t('animals.form.description', 'Popis')}:</strong> {viewingAnimal.description}
                 </Typography>
               )}
               
               {viewingAnimal.properties.length > 0 && (
                 <>
                   <Typography variant="h6" sx={{ mb: 1 }}>
-                    {t('animals.form.speciesProperties')}:
+                    {t('animals.form.speciesProperties', 'Vlastnosti druhu')}:
                   </Typography>
                   
                   {viewingAnimal.properties?.map((property) => (
                     <Paper key={property.id} sx={{ p: 2, mb: 1 }}>
-                      <Typography variant="subtitle2">{property.propertyName}</Typography>
+                      <Typography variant="subtitle2">
+                        {t(`animalDetail.propertyNames.${property.propertyName}`, property.propertyName)}
+                      </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {formatPropertyValue(property)}
                       </Typography>
@@ -1297,9 +1328,9 @@ const AnimalManagement: React.FC<AnimalManagementProps> = ({ editMode = 'list' }
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteConfirmId} onClose={() => setDeleteConfirmId(null)}>
-        <DialogTitle>{t('animals.deleteTitle')}</DialogTitle>
+        <DialogTitle>{t('animals.deleteTitle', 'Smazat zvíře')}</DialogTitle>
         <DialogContent>
-          <Typography>{t('animals.deleteConfirmation')}</Typography>
+          <Typography>{t('animals.deleteConfirmation', 'Opravdu chcete smazat toto zvíře? Tato akce je nevratná.')}</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteConfirmId(null)}>

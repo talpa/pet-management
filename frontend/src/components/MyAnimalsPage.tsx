@@ -90,7 +90,7 @@ const MyAnimalsPage: React.FC = () => {
       setAnimals(animals);
     } catch (err: any) {
       console.error('Failed to load my animals:', err);
-      setError('Nepodařilo se načíst vaše zvířata');
+      setError(t('errors.failedToLoadAnimals'));
     } finally {
       setLoading(false);
     }
@@ -110,22 +110,22 @@ const MyAnimalsPage: React.FC = () => {
   const handleDeleteAnimal = async (animalId: number, animalName: string, event: React.MouseEvent) => {
     event.stopPropagation();
     
-    if (window.confirm(`Opravdu chcete smazat zvíře "${animalName}"? Tato akce je nevratná.`)) {
+    if (window.confirm(t('confirmations.deleteAnimal', { name: animalName }))) {
       try {
         await apiClient.delete(`/animals/${animalId}`);
         setAnimals(animals.filter(a => a.id !== animalId));
       } catch (err: any) {
         console.error('Failed to delete animal:', err);
-        setError('Nepodařilo se smazat zvíře');
+        setError(t('errors.failedToDeleteAnimal'));
       }
     }
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'Neznámé datum';
+    if (!dateString) return t('common.unknownDate');
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Neplatné datum';
-    return date.toLocaleDateString('cs-CZ');
+    if (isNaN(date.getTime())) return t('common.invalidDate');
+    return date.toLocaleDateString(t('common.locale'));
   };
 
   const calculateAge = (birthDate?: string) => {
@@ -136,26 +136,26 @@ const MyAnimalsPage: React.FC = () => {
     const months = today.getMonth() - birth.getMonth();
     
     if (years > 0) {
-      return `${years} ${years === 1 ? 'rok' : years < 5 ? 'roky' : 'let'}`;
+      return t('age.years', { count: years });
     } else if (months > 0) {
-      return `${months} ${months === 1 ? 'měsíc' : months < 5 ? 'měsíce' : 'měsíců'}`;
+      return t('age.months', { count: months });
     } else {
-      return 'méně než měsíc';
+      return t('age.lessThanMonth');
     }
   };
 
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AdminLayout title={isAdmin ? "Správa všech zvířat" : "Moje zvířata"}>
+    <AdminLayout title={isAdmin ? t('pages.adminAnimals') : t('pages.myAnimals')}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          {isAdmin ? "🔧 Správa všech zvířat" : "🐾 Moje zvířata"}
+          {isAdmin ? `🔧 ${t('pages.adminAnimals')}` : `🐾 ${t('pages.myAnimals')}`}
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           {isAdmin 
-            ? "Jako administrátor můžete spravovat všechna zvířata v systému"
-            : "Zde najdete všechna svá registrovaná zvířata"
+            ? t('descriptions.adminAnimalsManagement')
+            : t('descriptions.myAnimalsDescription')
           }
         </Typography>
 
@@ -175,12 +175,12 @@ const MyAnimalsPage: React.FC = () => {
               <Paper sx={{ p: 4, textAlign: 'center' }}>
                 <PetsIcon sx={{ fontSize: 60, color: 'grey.400', mb: 2 }} />
                 <Typography variant="h6" color="text.secondary" gutterBottom>
-                  {isAdmin ? "V systému zatím nejsou žádná zvířata" : "Zatím nemáte registrovaná žádná zvířata"}
+                  {isAdmin ? t('emptyStates.noAnimalsAdmin') : t('emptyStates.noAnimalsUser')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   {isAdmin 
-                    ? "Nová zvířata můžete přidat pomocí tlačítka níže nebo importovat testovací data"
-                    : "Začněte přidáním svého prvního domácího mazlíčka"
+                    ? t('emptyStates.noAnimalsAdminDesc')
+                    : t('emptyStates.noAnimalsUserDesc')
                   }
                 </Typography>
                 <Button
@@ -190,7 +190,7 @@ const MyAnimalsPage: React.FC = () => {
                   onClick={() => navigate('/animals/new')}
                   size="large"
                 >
-                  Přidat {isAdmin ? 'zvíře' : 'mého mazlíčka'}
+                  {isAdmin ? t('actions.addAnimal') : t('actions.addMyPet')}
                 </Button>
               </Paper>
             ) : (
@@ -275,7 +275,7 @@ const MyAnimalsPage: React.FC = () => {
                             )}
                             
                             <Typography variant="caption" color="text.secondary">
-                              Přidáno: {formatDate(animal.created_at)}
+                              {t('common.addedOn')}: {formatDate(animal.created_at)}
                             </Typography>
                           </CardContent>
                         </CardActionArea>
@@ -297,7 +297,7 @@ const MyAnimalsPage: React.FC = () => {
                           >
                             <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
                             <Typography variant="caption">
-                              Zobrazit detail
+                              {t('actions.viewDetail')}
                             </Typography>
                           </Box>
                           

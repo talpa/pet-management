@@ -31,23 +31,29 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       {/* Admin Header */}
-      <AppBar position="static">
+      <AppBar 
+        position="static" 
+        component="nav" 
+        id="navigation"
+        role="navigation"
+        aria-label="Hlavní navigace"
+      >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Pet Management System - {isAdmin ? 'Admin' : 'Můj účet'}
+            {t('common.appName')} - {isAdmin ? t('common.admin') : t('navigation.myAccount')}
           </Typography>
           <Button color="inherit" component={Link} to="/">
-            Veřejná stránka
+            {t('navigation.publicPage')}
           </Button>
           
           {/* Dynamický odkaz podle role uživatele */}
           {isAdmin ? (
             <Button color="inherit" component={Link} to="/animals">
-              Zvířata
+              {t('navigation.animals')}
             </Button>
           ) : (
             <Button color="inherit" component={Link} to="/my-animals">
-              Moje zvířata
+              {t('navigation.myAnimals')}
             </Button>
           )}
           
@@ -55,7 +61,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
           {isAdmin && (
             <>
               <Button color="inherit" component={Link} to="/admin">
-                {t('common.admin', 'Admin')}
+                {t('common.admin')}
               </Button>
               <Button color="inherit" component={Link} to="/users">
                 {t('navigation.userManagement')}
@@ -67,7 +73,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
                 {t('navigation.animalSpecies')}
               </Button>
               <Button color="inherit" component={Link} to="/statistics">
-                Statistiky
+                {t('navigation.statistics')}
               </Button>
             </>
           )}
@@ -89,7 +95,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, requireAdmin
       )}
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container 
+        component="main"
+        id="main-content" 
+        maxWidth="lg" 
+        sx={{ mt: 4, mb: 4 }}
+        role="main"
+        aria-label={title ? `${title} - hlavní obsah` : 'Hlavní obsah'}
+      >
         {children}
       </Container>
     </Box>

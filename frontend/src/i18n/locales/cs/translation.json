@@ -40,6 +40,12 @@
     "facebookLogin": "Přihlásit se pomocí Facebook",
     "loginSuccess": "Přihlášení úspěšné",
     "registerSuccess": "Registrace úspěšná! Můžete se nyní přihlásit.",
+    "logout": "Odhlásit se",
+    "roles": {
+      "admin": "Administrátor",
+      "user": "Uživatel",
+      "moderator": "Moderátor"
+    },
     "errors": {
       "emailRequired": "E-mail je povinný",
       "emailInvalid": "Neplatný e-mail formát",
@@ -65,7 +71,13 @@
     "groups": "Skupiny",
     "memberships": "Členství",
     "animalSpecies": "Druhy zvířat",
-    "animals": "Zvířata"
+    "animals": "Zvířata",
+    "statistics": "Statistiky",
+    "publicPage": "Veřejná stránka",
+    "myAnimals": "Moje zvířata",
+    "myAccount": "Můj účet",
+    "profile": "Profil",
+    "settings": "Nastavení"
   },
   "userManagement": {
     "title": "Správa uživatelů",
@@ -265,6 +277,7 @@
   },
   "home": {
     "title": "Pet Management System",
+    "heroSubtitle": "Profesionální správa domácích mazlíčků a jejich evidence",
     "welcomeTitle": "Vítejte v Pet Management System",
     "welcomeSubtitle": "Profesionální správa domácích mazlíčků",
     "searchPlaceholder": "Vyhledejte zvíře podle názvu, popisu nebo majitele...",
@@ -364,5 +377,55 @@
     "saveError": "Chyba při ukládání profilu",
     "passwordChangeSuccess": "Heslo bylo úspěšně změněno",
     "passwordChangeError": "Chyba při změně hesla"
+  },
+  "statistics": {
+    "title": "Statistiky a Audit Log",
+    "tabs": {
+      "systemOverview": "Přehled systému",
+      "pageViews": "Návštěvnost stránek",
+      "animalStats": "Statistiky zvířat",
+      "userLocations": "Lokace uživatelů"
+    },
+    "cards": {
+      "totalUsers": "Celkem uživatelů",
+      "totalAnimals": "Celkem zvířat",
+      "activeUsers24h": "Aktivní za 24h",
+      "visits7d": "Návštěvy za 7 dní",
+      "newRegistrations": "Nové registrace",
+      "visitStats": "Návštěvnost",
+      "systemOverview": "Přehled systému",
+      "topErrors": "Nejčastější chyby (7 dní)"
+    },
+    "periods": {
+      "7days": "Za 7 dní",
+      "30days": "Za 30 dní",
+      "24hours": "Za 24 hodin"
+    },
+    "labels": {
+      "users": "Uživatelé",
+      "animals": "Zvířata",
+      "active24h": "Aktivní (24h)"
+    },
+    "loading": "Načítání..."
+  },
+  "permissions": {
+    "title": "Správa uživatelských oprávnění",
+    "selectUser": "Vybrat uživatele",
+    "permissionsFor": "Oprávnění pro {{name}}",
+    "grantPermission": "Udělit oprávnění",
+    "permissionsCategory": "Oprávnění {{category}}",
+    "permission": "Oprávnění",
+    "description": "Popis",
+    "status": "Stav",
+    "grantedBy": "Uděleno uživatelem",
+    "actions": "Akce",
+    "granted": "Uděleno",
+    "notGranted": "Neuděleno",
+    "noPermissions": "Tento uživatel nemá zatím přiřazena žádná oprávnění.",
+    "selectUserPrompt": "Vyberte uživatele pro správu jeho oprávnění",
+    "grantPermissionDialog": "Udělit oprávnění",
+    "expiresAt": "Platí do (volitelné)",
+    "permanentPermission": "Ponechte prázdné pro trvalé oprávnění",
+    "cancel": "Zrušit"
   }
 }

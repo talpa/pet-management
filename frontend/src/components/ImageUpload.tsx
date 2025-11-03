@@ -305,7 +305,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         multiple
         accept="image/*"
         aria-label={t('imageUpload.selectFiles')}
-        style={{ display: 'none' }}
+        sx={{ display: 'none' }}
         onChange={(e) => handleFileSelect(e.target.files)}
       />
 

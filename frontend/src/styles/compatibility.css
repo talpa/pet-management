@@ -1,0 +1,63 @@
+/* CSS Compatibility fixes for cross-browser support */
+
+/* Webkit text size adjust */
+body,
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  /* text-size-adjust not supported in all browsers */
+}
+
+/* User select with vendor prefixes */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Backdrop filter with vendor prefixes */
+.backdrop-blur {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Width stretch/fill-available with proper fallbacks */
+.width-stretch {
+  width: -webkit-fill-available; /* Chrome, Safari */
+  width: -moz-available;         /* Firefox */
+  width: fill-available;         /* Standard syntax */
+}
+
+/* Additional compatibility utilities */
+.flex-wrap {
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.transform-gpu {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Box sizing for all elements */
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Smooth scrolling */
+html {
+  -webkit-scroll-behavior: smooth;
+  scroll-behavior: smooth;
+}
+
+/* Better font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

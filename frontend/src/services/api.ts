@@ -171,7 +171,7 @@ export const authApi = {
     });
   },
 
-  register: (name: string, email: string, password: string) => {
+  register: (name: string, email: string, password: string, captchaToken?: string, captchaAnswer?: string, website?: string) => {
     return apiClient.post<{
       success: boolean;
       message: string;
@@ -183,7 +183,20 @@ export const authApi = {
       name,
       email,
       password,
+      captchaToken,
+      captchaAnswer,
+      website, // honeypot field
     });
+  },
+
+  getCaptcha: () => {
+    return apiClient.get<{
+      success: boolean;
+      data: {
+        token: string;
+        question: string;
+      };
+    }>('/auth/captcha');
   },
 
   verifyToken: () => {

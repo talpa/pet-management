@@ -8,6 +8,7 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   Download as DownloadIcon,
   Share as ShareIcon,
@@ -29,6 +30,7 @@ interface QRCodeData {
 }
 
 const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
+  const { t } = useTranslation();
   const [qrData, setQrData] = useState<QRCodeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
 
   const loadQRCode = async () => {
     if (!seoUrl) {
-      setError('SEO URL není nastavena');
+      setError(t('common.seoUrlNotSet'));
       setLoading(false);
       return;
     }
@@ -57,7 +59,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
       }
     } catch (err: any) {
       console.error('Failed to load QR code:', err);
-      setError('Nepodařilo se načíst QR kód');
+      setError(t('common.qrCodeLoadError'));
     } finally {
       setLoading(false);
     }
@@ -96,8 +98,8 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Profil zvířete`,
-          text: `Podívejte se na profil tohoto zvířete`,
+          title: t('common.animalProfile'),
+          text: t('common.animalProfileDescription'),
           url: qrData.shareableUrl,
         });
       } catch (err) {
@@ -132,7 +134,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
       <Box sx={{ py: 4 }}>
         <CircularProgress size={40} />
         <Typography variant="body2" sx={{ mt: 2 }}>
-          Generuji QR kód...
+          {t('common.generatingQR')}
         </Typography>
       </Box>
     );
@@ -149,7 +151,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
   if (!qrData) {
     return (
       <Alert severity="info" sx={{ mx: 2 }}>
-        QR kód není k dispozici
+        {t('common.qrCodeNotAvailable')}
       </Alert>
     );
   }
@@ -167,32 +169,33 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ animalId, seoUrl }) => {
           mb: 3
         }}
       >
-        <img 
+        <Box
+          component="img"
           src={qrData.qrCodeUrl} 
-          alt="QR kód pro profil zvířete"
-          style={{ 
+          alt={t('common.qrCodeAlt')}
+          sx={{ 
             display: 'block',
             width: 200,
-            height: 200
+            height: 200,
           }}
         />
       </Box>
 
       {/* Action Buttons */}
       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
-        <Tooltip title="Stáhnout QR kód">
+        <Tooltip title={t('common.downloadQR')}>
           <IconButton onClick={downloadQRCode} color="primary">
             <DownloadIcon />
           </IconButton>
         </Tooltip>
         
-        <Tooltip title="Sdílet">
+        <Tooltip title={t('common.share')}>
           <IconButton onClick={shareQRCode} color="primary">
             <ShareIcon />
           </IconButton>
         </Tooltip>
         
-        <Tooltip title="Kopírovat odkaz">
+        <Tooltip title={t('common.copyLink')}>
           <IconButton onClick={copyUrl} color="primary">
             <CopyIcon />
           </IconButton>

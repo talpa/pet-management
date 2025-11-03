@@ -217,12 +217,20 @@ const AdminDashboard: React.FC = () => {
               </Box>
 
               <Alert severity="info" sx={{ mt: 2 }}>
-                <Typography variant="body2">
-                  <strong>Seed databáze:</strong> Vymaže všechna existující data a vytvoří nová testovací data s 5 uživateli, 8 druhy zvířat a 12 zvířaty.
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>Upload obrázků:</strong> Stáhne a nahraje skutečné obrázky zvířat z Unsplash pro všechna zvířata v databázi.
-                </Typography>
+                <Box>
+                  <Box sx={{ typography: 'body2', fontWeight: 'bold' }}>
+                    Seed databáze:
+                  </Box>
+                  <Box sx={{ typography: 'body2' }}>
+                    Vymaže všechna existující data a vytvoří nová testovací data s 5 uživateli, 8 druhy zvířat a 12 zvířaty.
+                  </Box>
+                  <Box sx={{ typography: 'body2', fontWeight: 'bold', mt: 1 }}>
+                    Upload obrázků:
+                  </Box>
+                  <Box sx={{ typography: 'body2' }}>
+                    Stáhne a nahraje skutečné obrázky zvířat z Unsplash pro všechna zvířata v databázi.
+                  </Box>
+                </Box>
               </Alert>
             </CardContent>
           </Card>
@@ -242,11 +250,11 @@ const AdminDashboard: React.FC = () => {
                     <Typography variant="subtitle2" gutterBottom>
                       Administrátor
                     </Typography>
-                    <Typography variant="body2">
+                    <Box sx={{ typography: 'body2' }}>
                       📧 Email: <code>admin@petmanagement.cz</code><br />
                       🔒 Heslo: <code>password123</code><br />
                       👤 Role: <Chip label="admin" color="error" size="small" />
-                    </Typography>
+                    </Box>
                   </Box>
                 </Grid>
                 
@@ -255,11 +263,11 @@ const AdminDashboard: React.FC = () => {
                     <Typography variant="subtitle2" gutterBottom>
                       Uživatel
                     </Typography>
-                    <Typography variant="body2">
+                    <Box sx={{ typography: 'body2' }}>
                       📧 Email: <code>jana.novakova@email.cz</code><br />
                       🔒 Heslo: <code>password123</code><br />
                       👤 Role: <Chip label="user" color="primary" size="small" />
-                    </Typography>
+                    </Box>
                   </Box>
                 </Grid>
               </Grid>

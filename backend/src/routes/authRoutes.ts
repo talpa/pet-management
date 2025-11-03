@@ -11,6 +11,9 @@ import {
 } from '../controllers/authController';
 import { authenticateToken } from '../middleware/auth';
 import { auditMiddleware } from '../middleware/auditMiddleware';
+import { registerRateLimit, loginRateLimit } from '../middleware/rateLimiter';
+import { validateRegistrationData, validateHoneypot } from '../middleware/spamProtection';
+import { generateCaptcha, validateCaptcha } from '../middleware/captcha';
 import { Request, Response, NextFunction } from 'express';
 
 const router = Router();
@@ -35,7 +38,7 @@ router.get('/google/callback',
 
 // Facebook OAuth routes
 router.get('/facebook',
-  passport.authenticate('facebook', { scope: ['email'] })
+  passport.authenticate('facebook', { scope: ['public_profile'] })
 );
 
 router.get('/facebook/callback',
@@ -47,10 +50,19 @@ router.get('/facebook/callback',
 // Protected routes
 router.get('/user', authenticateToken, auditMiddleware('GET_CURRENT_USER', 'auth'), getCurrentUser);
 router.post('/verify', auditMiddleware('VERIFY_TOKEN', 'auth'), verifyToken);
+router.get('/verify', auditMiddleware('VERIFY_TOKEN', 'auth'), verifyToken);
 
-// Classic authentication routes
-router.post('/login', auditMiddleware('USER_LOGIN', 'auth'), classicLogin);
-router.post('/register', auditMiddleware('USER_REGISTER', 'auth'), classicRegister);
+// Classic authentication routes s anti-spam ochranou
+router.get('/captcha', generateCaptcha);
+router.post('/login', loginRateLimit, auditMiddleware('USER_LOGIN', 'auth'), classicLogin);
+router.post('/register', 
+  registerRateLimit,
+  validateHoneypot,
+  validateRegistrationData,
+  validateCaptcha,
+  auditMiddleware('USER_REGISTER', 'auth'), 
+  classicRegister
+);
 router.post('/logout', auditMiddleware('USER_LOGOUT', 'auth'), logout);
 
 export default router;

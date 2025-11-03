@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -51,6 +52,7 @@ import {
 import { Permission, UserPermission } from '../types/Permission';
 
 const UserPermissionsManagement: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const { users } = useSelector((state: RootState) => state.user as UserState);
   const { permissions, userPermissions, categories, loading } = useSelector(
@@ -130,7 +132,7 @@ const UserPermissionsManagement: React.FC = () => {
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
         <SecurityIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-        User Permissions Management
+        {t('permissions.title')}
       </Typography>
 
       <Grid container spacing={3}>
@@ -140,7 +142,7 @@ const UserPermissionsManagement: React.FC = () => {
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 <PersonIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-                Select User
+                {t('permissions.selectUser')}
               </Typography>
               <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
                 {users?.map((user) => (
@@ -179,7 +181,7 @@ const UserPermissionsManagement: React.FC = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6">
-                    Permissions for {selectedUser.name}
+                    {t('permissions.permissionsFor', { name: selectedUser.name })}
                   </Typography>
                   <Button
                     variant="contained"
@@ -187,7 +189,7 @@ const UserPermissionsManagement: React.FC = () => {
                     onClick={() => setOpenDialog(true)}
                     disabled={availablePermissions.length === 0}
                   >
-                    Grant Permission
+                    {t('permissions.grantPermission')}
                   </Button>
                 </Box>
 
@@ -198,17 +200,17 @@ const UserPermissionsManagement: React.FC = () => {
                   return (
                     <Box key={category} sx={{ mb: 3 }}>
                       <Typography variant="h6" sx={{ mb: 1, textTransform: 'capitalize' }}>
-                        {category} Permissions
+                        {t('permissions.permissionsCategory', { category })}
                       </Typography>
                       <TableContainer component={Paper} variant="outlined">
                         <Table size="small">
                           <TableHead>
                             <TableRow>
-                              <TableCell>Permission</TableCell>
-                              <TableCell>Description</TableCell>
-                              <TableCell>Status</TableCell>
-                              <TableCell>Granted By</TableCell>
-                              <TableCell>Actions</TableCell>
+                              <TableCell>{t('permissions.permission')}</TableCell>
+                              <TableCell>{t('permissions.description')}</TableCell>
+                              <TableCell>{t('permissions.status')}</TableCell>
+                              <TableCell>{t('permissions.grantedBy')}</TableCell>
+                              <TableCell>{t('permissions.actions')}</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -235,7 +237,7 @@ const UserPermissionsManagement: React.FC = () => {
                                     <Chip
                                       size="small"
                                       icon={granted ? <CheckIcon /> : <CloseIcon />}
-                                      label={granted ? 'Granted' : 'Not Granted'}
+                                      label={granted ? t('permissions.granted') : t('permissions.notGranted')}
                                       color={granted ? 'success' : 'default'}
                                     />
                                   </TableCell>
@@ -288,7 +290,7 @@ const UserPermissionsManagement: React.FC = () => {
 
                 {userPermissions.length === 0 && (
                   <Alert severity="info">
-                    This user has no permissions assigned yet.
+                    {t('permissions.noPermissions')}
                   </Alert>
                 )}
               </CardContent>
@@ -297,7 +299,7 @@ const UserPermissionsManagement: React.FC = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" color="text.secondary" textAlign="center">
-                  Select a user to manage their permissions
+                  {t('permissions.selectUserPrompt')}
                 </Typography>
               </CardContent>
             </Card>
@@ -307,15 +309,15 @@ const UserPermissionsManagement: React.FC = () => {
 
       {/* Grant Permission Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Grant Permission</DialogTitle>
+        <DialogTitle>{t('permissions.grantPermissionDialog')}</DialogTitle>
         <DialogContent>
           <Box sx={{ mt: 2 }}>
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Permission</InputLabel>
+              <InputLabel>{t('permissions.permission')}</InputLabel>
               <Select
                 value={selectedPermission}
                 onChange={(e) => setSelectedPermission(e.target.value as number | '')}
-                label="Permission"
+                label={t('permissions.permission')}
               >
                 {availablePermissions.map((permission) => (
                   <MenuItem key={permission.id} value={permission.id}>
@@ -332,23 +334,23 @@ const UserPermissionsManagement: React.FC = () => {
 
             <TextField
               fullWidth
-              label="Expires At (optional)"
+              label={t('permissions.expiresAt')}
               type="datetime-local"
               value={expiresAt}
               onChange={(e) => setExpiresAt(e.target.value)}
               InputLabelProps={{ shrink: true }}
-              helperText="Leave empty for permanent permission"
+              helperText={t('permissions.permanentPermission')}
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={() => setOpenDialog(false)}>{t('permissions.cancel')}</Button>
           <Button
             onClick={handleGrantPermission}
             variant="contained"
             disabled={!selectedPermission}
           >
-            Grant Permission
+            {t('permissions.grantPermission')}
           </Button>
         </DialogActions>
       </Dialog>

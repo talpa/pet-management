@@ -385,7 +385,11 @@ const UserManagement: React.FC = () => {
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: user.role === 'admin' ? 'error.main' : 'primary.main', mr: 2 }}>
+                      <Avatar 
+                        sx={{ bgcolor: user.role === 'admin' ? 'error.main' : 'primary.main', mr: 2 }}
+                        title={`${user.name} - ${user.role}`}
+                        aria-label={`${user.name} profile, role: ${user.role}`}
+                      >
                         <PersonIcon />
                       </Avatar>
                       <Box>

@@ -1,5 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import './i18n/index'; // Initialize i18n
+import { useTranslation } from 'react-i18next';
+import { CircularProgress, Box } from '@mui/material';
 import HomePage from './components/HomePage';
 import AdminDashboard from './components/AdminDashboard';
 import UserManagement from './components/UserManagement';
@@ -15,12 +18,26 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './components/AdminLayout';
 import MyAnimalsPage from './components/MyAnimalsPage';
 import UserProfilePage from './components/UserProfilePage';
+import SkipNavigation from './components/SkipNavigation';
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { checkAuth } from './store/authSlice';
 
-function App() {
+// Loading component for i18n
+const LoadingFallback: React.FC = () => (
+  <Box 
+    display="flex" 
+    justifyContent="center" 
+    alignItems="center" 
+    minHeight="100vh"
+  >
+    <CircularProgress />
+  </Box>
+);
+
+function AppContent() {
   const dispatch = useAppDispatch();
   const { initialized } = useAppSelector((state) => state.auth);
+  const { ready } = useTranslation();
 
   useEffect(() => {
     // Check authentication status on app start only if not already initialized
@@ -30,8 +47,14 @@ function App() {
     }
   }, [dispatch, initialized]);
 
+  // Wait for i18n to be ready
+  if (!ready) {
+    return <LoadingFallback />;
+  }
+
   return (
     <div className="App">
+      <SkipNavigation />
       <Routes>
         <Route path="/login" element={<ClassicLogin />} />
         <Route path="/animal/:seoUrl" element={<AnimalDetail />} />
@@ -142,6 +165,15 @@ function App() {
         />
       </Routes>
     </div>
+  );
+}
+
+// Main App component with Suspense
+function App() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AppContent />
+    </Suspense>
   );
 }
 

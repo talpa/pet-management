@@ -45,7 +45,7 @@ const LanguageSwitcher: React.FC = () => {
           sx={{ ml: 1, color: 'inherit' }}
           aria-controls={open ? 'language-menu' : undefined}
           aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
+          aria-label="Změnit jazyk"
         >
           <Language />
           <Typography variant="body2" sx={{ ml: 0.5, fontSize: '0.8rem' }}>

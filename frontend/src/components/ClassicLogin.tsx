@@ -85,17 +85,57 @@ const ClassicLogin: React.FC = () => {
   const [loginErrors, setLoginErrors] = useState<{[key: string]: string}>({});
   const [registerErrors, setRegisterErrors] = useState<{[key: string]: string}>({});
 
+  // CAPTCHA states
+  const [captcha, setCaptcha] = useState<{
+    token: string;
+    question: string;
+    answer: string;
+  }>({
+    token: '',
+    question: '',
+    answer: ''
+  });
+  const [captchaLoading, setCaptchaLoading] = useState(false);
+
+  // Honeypot field (should stay empty)
+  const [website, setWebsite] = useState('');
+
   // Detect if running in VS Code Simple Browser
   const isSimpleBrowser = navigator.userAgent.includes('VS Code') || 
                           window.location.href.includes('vscode-webview') ||
                           window.parent !== window;
 
+  // Load CAPTCHA when switching to register tab
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/', { replace: true });
-      return;
+    if (tabValue === 1) { // Register tab
+      loadCaptcha();
     }
+  }, [tabValue]);
 
+  const loadCaptcha = async () => {
+    setCaptchaLoading(true);
+    try {
+      const response = await authApi.getCaptcha();
+      
+      if (response.data.success) {
+        setCaptcha({
+          token: response.data.data.token,
+          question: response.data.data.question,
+          answer: ''
+        });
+      } else {
+        setFormError('Chyba při načítání CAPTCHA');
+      }
+    } catch (error) {
+      console.error('CAPTCHA loading error:', error);
+      setFormError('Chyba při načítání CAPTCHA');
+    } finally {
+      setCaptchaLoading(false);
+    }
+  };
+
+  // Handle auth redirects and navigation
+  useEffect(() => {
     // Check for auth success/error in URL params
     const urlParams = new URLSearchParams(location.search);
     const authStatus = urlParams.get('auth');
@@ -107,23 +147,10 @@ const ClassicLogin: React.FC = () => {
       dispatch(clearError());
     }
 
-    // Listen for popup messages (OAuth)
-    const handleMessage = (event: MessageEvent) => {
-      console.log('=== postMessage received ===');
-      console.log('Origin:', event.origin);
-      console.log('Data:', event.data);
-
-      if (event.data && event.data.type === 'OAUTH_SUCCESS') {
-        console.log('✅ OAuth success message received');
-        dispatch(checkAuth());
-      } else if (event.data && event.data.type === 'OAUTH_ERROR') {
-        console.log('❌ OAuth error message received');
-        dispatch(clearError());
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    // Navigate if authenticated
+    if (isAuthenticated) {
+      navigate('/');
+    }
   }, [dispatch, navigate, location.search, isAuthenticated]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -166,6 +193,8 @@ const ClassicLogin: React.FC = () => {
       errors.name = 'Jméno je povinné';
     } else if (registerForm.name.length < 2) {
       errors.name = 'Jméno musí mít alespoň 2 znaky';
+    } else if (!/^[a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s\-\.]{2,50}$/.test(registerForm.name)) {
+      errors.name = 'Jméno obsahuje nepovolené znaky';
     }
 
     if (!registerForm.email) {
@@ -184,6 +213,13 @@ const ClassicLogin: React.FC = () => {
       errors.confirmPassword = 'Potvrzení hesla je povinné';
     } else if (registerForm.password !== registerForm.confirmPassword) {
       errors.confirmPassword = 'Hesla se neshodují';
+    }
+
+    // CAPTCHA validation
+    if (!captcha.token) {
+      errors.captcha = 'Načtěte prosím CAPTCHA';
+    } else if (!captcha.answer) {
+      errors.captcha = 'Vyřešte prosím CAPTCHA';
     }
 
     setRegisterErrors(errors);
@@ -232,22 +268,30 @@ const ClassicLogin: React.FC = () => {
       const response = await authApi.register(
         registerForm.name,
         registerForm.email,
-        registerForm.password
+        registerForm.password,
+        captcha.token,
+        captcha.answer,
+        website // honeypot field
       );
 
       if (response.data.success) {
         setFormSuccess('Registrace úspěšná! Můžete se přihlásit.');
         setTabValue(0); // Switch to login tab
         setRegisterForm({ name: '', email: '', password: '', confirmPassword: '' });
+        setCaptcha({ token: '', question: '', answer: '' });
+        setWebsite(''); // Clear honeypot
       } else {
         setFormError(response.data.message || 'Registrace selhala');
+        // Reload CAPTCHA on error
+        loadCaptcha();
       }
     } catch (error: any) {
       console.error('Register error:', error);
-      setFormError(
-        error.response?.data?.message || 
-        'Chyba při registraci. Zkuste to znovu.'
-      );
+      const errorMessage = error.response?.data?.message || 'Chyba při registraci. Zkuste to znovu.';
+      setFormError(errorMessage);
+      
+      // Reload CAPTCHA on error
+      loadCaptcha();
     } finally {
       setFormLoading(false);
     }
@@ -258,27 +302,9 @@ const ClassicLogin: React.FC = () => {
     console.log(`🚀 Starting OAuth login for ${provider}`);
     
     const apiBaseUrl = process.env.REACT_APP_API_URL || '/api';
-    const popup = window.open(
-      `${apiBaseUrl}/auth/${provider}`,
-      'oauth',
-      'width=500,height=600,scrollbars=yes,resizable=yes'
-    );
-
-    if (popup) {
-      const checkInterval = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(checkInterval);
-        }
-      }, 1000);
-
-      setTimeout(() => {
-        popup.close();
-        clearInterval(checkInterval);
-      }, 5 * 60 * 1000);
-    } else {
-      const apiBaseUrl = process.env.REACT_APP_API_URL || '/api';
-      window.location.href = `${apiBaseUrl}/auth/${provider}`;
-    }
+    
+    // Use direct redirect for same-window OAuth flow
+    window.location.assign(`${apiBaseUrl}/auth/${provider}`);
   };
 
   if (isAuthenticated) {
@@ -523,6 +549,54 @@ const ClassicLogin: React.FC = () => {
                   }}
                 />
 
+                {/* Honeypot field - should stay hidden and empty */}
+                <TextField
+                  sx={{ display: 'none' }}
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  name="website"
+                  autoComplete="off"
+                  tabIndex={-1}
+                />
+
+                {/* CAPTCHA */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Anti-spam ověření:
+                  </Typography>
+                  {captchaLoading ? (
+                    <Typography>Načítání CAPTCHA...</Typography>
+                  ) : captcha.question ? (
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Typography variant="body1">
+                        {captcha.question}
+                      </Typography>
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={captcha.answer}
+                        onChange={(e) => setCaptcha({ ...captcha, answer: e.target.value })}
+                        error={!!registerErrors.captcha}
+                        helperText={registerErrors.captcha}
+                        disabled={formLoading}
+                        sx={{ width: 100 }}
+                        placeholder="Odpověď"
+                      />
+                      <Button
+                        size="small"
+                        onClick={loadCaptcha}
+                        disabled={captchaLoading || formLoading}
+                      >
+                        🔄
+                      </Button>
+                    </Stack>
+                  ) : (
+                    <Button onClick={loadCaptcha} disabled={captchaLoading}>
+                      Načíst CAPTCHA
+                    </Button>
+                  )}
+                </Box>
+
                 <Button
                   type="submit"
                   fullWidth
@@ -574,7 +648,7 @@ const ClassicLogin: React.FC = () => {
                 size="large"
                 startIcon={<Facebook />}
                 onClick={() => handleOAuthLogin('facebook')}
-                disabled={formLoading || loading || isSimpleBrowser}
+                disabled={formLoading || loading}
                 sx={{
                   py: 1.5,
                   borderColor: '#4267B2',
@@ -585,7 +659,7 @@ const ClassicLogin: React.FC = () => {
                   },
                 }}
               >
-                Facebook
+                Facebook (pouze veřejný profil)
               </Button>
             </Stack>
 

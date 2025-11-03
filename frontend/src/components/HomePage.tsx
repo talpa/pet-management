@@ -12,11 +12,13 @@ import {
   Container,
 } from '@mui/material';
 import { People, Dashboard, Storage } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchUsers, UserState } from '../store/userSlice';
 import { User } from '../types/User';
 
 const HomePage: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const userState = useSelector((state: RootState) => state.user as UserState);
   const { users, loading } = userState;

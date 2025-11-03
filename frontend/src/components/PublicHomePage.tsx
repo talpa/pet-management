@@ -232,10 +232,10 @@ const PublicHomePage: React.FC = () => {
       >
         <Container maxWidth="md">
           <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-            🐾 Pet Management System
+            🐾 {t('home.title')}
           </Typography>
           <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
-            Moderní systém pro správu domácích mazlíčků a jejich údajů
+            {t('home.heroSubtitle')}
           </Typography>
           {!isAuthenticated && (
             <Button
@@ -255,7 +255,7 @@ const PublicHomePage: React.FC = () => {
                 }
               }}
             >
-              Přihlásit se do systému
+              {t('home.loginToSystem')}
             </Button>
           )}
           {isAuthenticated && (
@@ -276,7 +276,7 @@ const PublicHomePage: React.FC = () => {
                 }
               }}
             >
-              Moje zvířata
+              {t('navigation.myAnimals')}
             </Button>
           )}
         </Container>

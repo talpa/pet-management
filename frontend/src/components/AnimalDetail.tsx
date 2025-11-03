@@ -103,9 +103,9 @@ const AnimalDetail: React.FC = () => {
       } catch (err: any) {
         console.error('Error loading animal:', err);
         if (err.response?.status === 404) {
-          setError('Animal not found');
+          setError(t('animalDetail.errors.notFound'));
         } else {
-          setError(err.response?.data?.message || 'Error loading animal');
+          setError(err.response?.data?.message || t('animalDetail.errors.loadingError'));
         }
       } finally {
         setLoading(false);
@@ -128,11 +128,11 @@ const AnimalDetail: React.FC = () => {
     const months = today.getMonth() - birth.getMonth();
     
     if (years > 0) {
-      return `${years} ${years === 1 ? 'rok' : years < 5 ? 'roky' : 'let'}`;
+      return t('age.years', { count: years });
     } else if (months > 0) {
-      return `${months} ${months === 1 ? 'měsíc' : months < 5 ? 'měsíce' : 'měsíců'}`;
+      return t('age.months', { count: months });
     } else {
-      return 'méně než měsíc';
+      return t('age.lessThanMonth');
     }
   };
 
@@ -148,16 +148,16 @@ const AnimalDetail: React.FC = () => {
 
   if (error || !animal) {
     return (
-      <PublicLayout title="Zvíře nenalezeno">
+      <PublicLayout title={t('animalDetail.title.notFound')}>
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error || 'Animal not found'}
+          {error || t('animalDetail.errors.animalNotFound')}
         </Alert>
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate('/')}
           variant="contained"
         >
-          {t('common.back')}
+          {t('common.backToHome')}
         </Button>
       </PublicLayout>
     );
@@ -212,7 +212,7 @@ const AnimalDetail: React.FC = () => {
         <Grid item xs={12} md={primaryImage ? 6 : 12}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
-              Základní informace
+              {t('animalDetail.basicInfo')}
             </Typography>
             
             <Grid container spacing={2}>
@@ -222,7 +222,7 @@ const AnimalDetail: React.FC = () => {
                     <CalendarIcon color="action" />
                     <Box>
                       <Typography variant="body2" color="text.secondary">
-                        Datum narození
+                        {t('animalDetail.fields.birthDate')}
                       </Typography>
                       <Typography variant="body1">
                         {formatDate(animal.birthDate)}
@@ -240,7 +240,7 @@ const AnimalDetail: React.FC = () => {
                   <PersonIcon color="action" />
                   <Box>
                     <Typography variant="body2" color="text.secondary">
-                      Majitel
+                      {t('animalDetail.fields.owner')}
                     </Typography>
                     <Typography variant="body1">
                       {animal.owner.name}
@@ -252,7 +252,7 @@ const AnimalDetail: React.FC = () => {
               {animal.species.scientificName && (
                 <Grid item xs={12}>
                   <Typography variant="body2" color="text.secondary">
-                    Vědecký název
+                    {t('animalDetail.fields.scientificName')}
                   </Typography>
                   <Typography variant="body1" sx={{ fontStyle: 'italic' }}>
                     {animal.species.scientificName}
@@ -263,7 +263,7 @@ const AnimalDetail: React.FC = () => {
               {animal.description && (
                 <Grid item xs={12}>
                   <Typography variant="body2" color="text.secondary">
-                    Popis
+                    {t('animalDetail.fields.description')}
                   </Typography>
                   <Typography variant="body1">
                     {animal.description}
@@ -279,21 +279,21 @@ const AnimalDetail: React.FC = () => {
           <Grid item xs={12}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h5" gutterBottom>
-                Vlastnosti
+                {t('animalDetail.properties')}
               </Typography>
               <Grid container spacing={2}>
                 {animal.properties.map((property) => (
                   <Grid item xs={12} sm={6} md={4} key={property.id}>
                     <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                       <Typography variant="subtitle2" color="text.secondary">
-                        {property.propertyName}
+                        {t(`animalDetail.propertyNames.${property.propertyName}`, property.propertyName)}
                       </Typography>
                       <Typography variant="body1">
-                        {property.propertyValue || 'Neuvedeno'}
+                        {property.propertyValue || t('animalDetail.notSpecified')}
                       </Typography>
                       {property.measuredAt && (
                         <Typography variant="caption" color="text.secondary">
-                          Změřeno: {formatDate(property.measuredAt.toString())}
+                          {t('animalDetail.measuredAt')}: {formatDate(property.measuredAt.toString())}
                         </Typography>
                       )}
                     </Box>
@@ -308,10 +308,10 @@ const AnimalDetail: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="h5" gutterBottom>
-              📱 QR kód pro sdílení
+              📱 {t('animalDetail.qrCode.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Naskenujte QR kód pro rychlý přístup k profilu zvířete
+              {t('animalDetail.qrCode.description')}
             </Typography>
             <QRCodeDisplay animalId={animal.id} seoUrl={animal.seoUrl!} />
           </Paper>
@@ -322,7 +322,7 @@ const AnimalDetail: React.FC = () => {
           <Grid item xs={12}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h5" gutterBottom>
-                Další fotografie
+                {t('animalDetail.additionalPhotos')}
               </Typography>
               <Grid container spacing={2}>
                 {animal.images

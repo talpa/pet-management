@@ -31,7 +31,11 @@ const generateToken = (user: any) => {
 // Login success callback (after OAuth)
 export const loginSuccess = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
+    console.log('🔐 OAuth login success callback');
+    console.log('👤 User object:', req.user);
+    
     if (!req.user) {
+      console.log('❌ No user object in request');
       res.status(401).json({
         success: false,
         message: 'Authentication failed',
@@ -40,6 +44,7 @@ export const loginSuccess = async (req: AuthenticatedRequest, res: Response): Pr
     }
 
     const token = generateToken(req.user);
+    console.log('🎫 Generated JWT token for user:', req.user.email);
     
     // Set HTTP-only cookie
     res.cookie('token', token, {
@@ -49,162 +54,21 @@ export const loginSuccess = async (req: AuthenticatedRequest, res: Response): Pr
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    // For popup-based OAuth, send HTML that closes the popup
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Login Successful</title>
-          <style>
-            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-            .success { color: green; }
-            .info { color: #666; margin-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <h2 class="success">✅ Přihlášení úspěšné!</h2>
-          <p class="info">Toto okno se automaticky zavře...</p>
-          
-          <script>
-            console.log('OAuth Success page loaded');
-            console.log('User data:', ${JSON.stringify(req.user)});
-            
-            // Close popup and notify parent window
-            function closePopup() {
-              try {
-                if (window.opener && !window.opener.closed) {
-                  console.log('Sending postMessage to parent window');
-                  
-                  // Send message to specific origin for security
-                  window.opener.postMessage({ 
-                    type: 'OAUTH_SUCCESS',
-                    user: ${JSON.stringify(req.user)},
-                    timestamp: Date.now()
-                  }, '${CLIENT_URL}');
-                  
-                  console.log('PostMessage sent, waiting before close...');
-                  
-                  // Wait a bit longer to ensure message is received
-                  setTimeout(() => {
-                    console.log('Closing popup window now');
-                    window.close();
-                  }, 1000);
-                } else {
-                  console.log('No opener or opener closed, using redirect fallback');
-                  // Fallback redirect for non-popup flow
-                  window.location.href = '${CLIENT_URL}?auth=success';
-                }
-              } catch (e) {
-                console.error('Error in popup flow:', e);
-                // Force close after error
-                setTimeout(() => {
-                  console.log('Force closing popup after error');
-                  window.close();
-                }, 1500);
-              }
-            }
-            
-            // Try to close immediately and also set backup timers
-            closePopup();
-            
-            // Backup auto-close in case postMessage fails
-            setTimeout(() => {
-              console.log('Backup auto-close triggered');
-              window.close();
-            }, 3000);
-            
-            // Manual close button backup
-            document.addEventListener('DOMContentLoaded', function() {
-              setTimeout(() => {
-                if (!window.closed) {
-                  document.body.innerHTML += '<br><button onclick="window.close()" style="padding: 10px 20px; margin-top: 20px;">Zavřít okno ručně</button>';
-                }
-              }, 2000);
-            });
-          </script>
-        </body>
-      </html>
-    `);
+    // Přímé přesměrování na hlavní stránku - žádné popup
+    console.log('✅ OAuth success - redirecting directly to main page');
+    res.redirect(`${CLIENT_URL}?auth=success&timestamp=${Date.now()}`);
+    
   } catch (error) {
-    console.error('Login success error:', error);
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Login Error</title>
-        </head>
-        <body>
-          <script>
-            if (window.opener) {
-              window.opener.postMessage({ type: 'OAUTH_ERROR' }, '${CLIENT_URL}');
-              window.close();
-            } else {
-              window.location.href = '${CLIENT_URL}?auth=error';
-            }
-          </script>
-          <p>Login failed. This window should close automatically...</p>
-        </body>
-      </html>
-    `);
+    console.error('❌ Login success error:', error);
+    res.redirect(`${CLIENT_URL}?auth=error&timestamp=${Date.now()}`);
   }
 };
 
 // Login failure callback
 export const loginFailure = async (req: Request, res: Response): Promise<void> => {
   console.error('OAuth login failure');
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Login Error</title>
-        <style>
-          body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-          .error { color: red; }
-          .info { color: #666; margin-top: 20px; }
-        </style>
-      </head>
-      <body>
-        <h2 class="error">❌ Chyba přihlášení</h2>
-        <p class="info">Toto okno se automaticky zavře...</p>
-        
-        <script>
-          console.log('OAuth Error page loaded');
-          
-          function closePopup() {
-            try {
-              if (window.opener && !window.opener.closed) {
-                console.log('Sending error postMessage to parent window');
-                window.opener.postMessage({ 
-                  type: 'OAUTH_ERROR',
-                  error: 'Authentication failed',
-                  timestamp: Date.now()
-                }, '${CLIENT_URL}');
-                
-                setTimeout(() => {
-                  console.log('Closing error popup');
-                  window.close();
-                }, 1000);
-              } else {
-                console.log('No opener, using redirect fallback');
-                window.location.href = '${CLIENT_URL}?auth=error';
-              }
-            } catch (e) {
-              console.error('Error in popup error flow:', e);
-              setTimeout(() => window.close(), 1500);
-            }
-          }
-          
-          closePopup();
-          
-          // Backup auto-close
-          setTimeout(() => {
-            console.log('Backup error auto-close');
-            window.close();
-          }, 3000);
-        </script>
-      </body>
-    </html>
-  `);
+  // Přímé přesměrování na hlavní stránku s chybou
+  res.redirect(`${CLIENT_URL}?auth=error&timestamp=${Date.now()}`);
 };
 
 // Get current user
@@ -265,9 +129,14 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
 // Verify token endpoint
 export const verifyToken = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('🔍 Verify token endpoint called');
+    console.log('🍪 Cookies:', req.cookies);
+    console.log('🔑 Authorization header:', req.headers.authorization);
+    
     const token = req.cookies.token || req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
+      console.log('❌ No token provided');
       res.status(401).json({
         success: false,
         message: 'No token provided',
@@ -275,12 +144,16 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
+    console.log('🔍 Token found, verifying...');
     const decoded = jwt.verify(token, JWT_SECRET) as any;
+    console.log('✅ Token decoded:', decoded);
+    
     const user = await User.findByPk(decoded.id, {
       attributes: ['id', 'name', 'email', 'role', 'status', 'provider', 'avatar'],
     });
 
     if (!user) {
+      console.log('❌ User not found for token');
       res.status(401).json({
         success: false,
         message: 'Invalid token',
@@ -288,6 +161,7 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
+    console.log('✅ Token verification successful for user:', user.email);
     res.json({
       success: true,
       data: {
@@ -296,7 +170,7 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
       },
     });
   } catch (error) {
-    console.error('Verify token error:', error);
+    console.error('❌ Verify token error:', error);
     res.status(401).json({
       success: false,
       message: 'Invalid token',

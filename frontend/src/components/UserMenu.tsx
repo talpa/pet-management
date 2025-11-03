@@ -18,10 +18,12 @@ import {
   Logout,
   Person,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/authSlice';
 
 const UserMenu: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -74,7 +76,11 @@ const UserMenu: React.FC = () => {
             sx={{ width: 32, height: 32 }}
           />
         ) : (
-          <Avatar sx={{ width: 32, height: 32 }}>
+          <Avatar 
+            sx={{ width: 32, height: 32 }}
+            title={user.name}
+            aria-label={`${user.name} profile picture`}
+          >
             {user.name.charAt(0).toUpperCase()}
           </Avatar>
         )}
@@ -105,7 +111,7 @@ const UserMenu: React.FC = () => {
             {user.email}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {getProviderIcon(user.provider || 'local')} {user.provider || 'Local'} • {user.role}
+            {getProviderIcon(user.provider || 'local')} {user.provider || 'Local'} • {t(`auth.roles.${user.role}`)}
           </Typography>
         </Box>
         
@@ -116,14 +122,14 @@ const UserMenu: React.FC = () => {
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Profil</ListItemText>
+          <ListItemText>{t('navigation.profile')}</ListItemText>
         </MenuItem>
 
         <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Nastavení</ListItemText>
+          <ListItemText>{t('navigation.settings')}</ListItemText>
         </MenuItem>
 
         <Divider />
@@ -132,7 +138,7 @@ const UserMenu: React.FC = () => {
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Odhlásit se</ListItemText>
+          <ListItemText>{t('auth.logout')}</ListItemText>
         </MenuItem>
       </Menu>
     </Box>

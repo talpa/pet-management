@@ -40,6 +40,12 @@
     "facebookLogin": "Sign in with Facebook",
     "loginSuccess": "Login successful",
     "registerSuccess": "Registration successful! You can now sign in.",
+    "logout": "Logout",
+    "roles": {
+      "admin": "Administrator",
+      "user": "User",
+      "moderator": "Moderator"
+    },
     "errors": {
       "emailRequired": "Email is required",
       "emailInvalid": "Invalid email format",
@@ -65,7 +71,13 @@
     "groups": "Groups",
     "memberships": "Memberships",
     "animalSpecies": "Animal Species",
-    "animals": "Animals"
+    "animals": "Animals",
+    "statistics": "Statistics",
+    "publicPage": "Public Page",
+    "myAnimals": "My Animals",
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "settings": "Settings"
   },
   "userManagement": {
     "title": "User Management",
@@ -265,6 +277,7 @@
   },
   "home": {
     "title": "Pet Management System",
+    "heroSubtitle": "Professional pet management and registration system",
     "welcomeTitle": "Welcome to Pet Management System",
     "welcomeSubtitle": "Professional pet management solution",
     "searchPlaceholder": "Search for an animal by name, description or owner...",
@@ -364,5 +377,55 @@
     "saveError": "Error saving profile",
     "passwordChangeSuccess": "Password changed successfully",
     "passwordChangeError": "Error changing password"
+  },
+  "permissions": {
+    "title": "User Permissions Management",
+    "selectUser": "Select User",
+    "permissionsFor": "Permissions for {{name}}",
+    "grantPermission": "Grant Permission",
+    "permissionsCategory": "{{category}} Permissions",
+    "permission": "Permission",
+    "description": "Description",
+    "status": "Status",
+    "grantedBy": "Granted By",
+    "actions": "Actions",
+    "granted": "Granted",
+    "notGranted": "Not Granted",
+    "noPermissions": "This user has no permissions assigned yet.",
+    "selectUserPrompt": "Select a user to manage their permissions",
+    "grantPermissionDialog": "Grant Permission",
+    "expiresAt": "Expires At (optional)",
+    "permanentPermission": "Leave empty for permanent permission",
+    "cancel": "Cancel"
+  },
+  "statistics": {
+    "title": "Statistics and Audit Log",
+    "tabs": {
+      "systemOverview": "System Overview",
+      "pageViews": "Page Views",
+      "animalStats": "Animal Statistics",
+      "userLocations": "User Locations"
+    },
+    "cards": {
+      "totalUsers": "Total Users",
+      "totalAnimals": "Total Animals",
+      "activeUsers24h": "Active in 24h",
+      "visits7d": "Visits in 7 days",
+      "newRegistrations": "New Registrations",
+      "visitStats": "Visit Statistics",
+      "systemOverview": "System Overview",
+      "topErrors": "Top Errors (7 days)"
+    },
+    "periods": {
+      "7days": "7 days",
+      "30days": "30 days",
+      "24hours": "24 hours"
+    },
+    "labels": {
+      "users": "Users",
+      "animals": "Animals",
+      "active24h": "Active (24h)"
+    },
+    "loading": "Loading..."
   }
 }
