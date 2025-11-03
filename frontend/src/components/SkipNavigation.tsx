@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Link } from '@mui/material';
-import { visuallyHiddenSx, focusVisibleSx } from '../styles/compatibility';
 
 interface SkipLinkProps {
   href: string;
@@ -12,8 +11,15 @@ const SkipLink: React.FC<SkipLinkProps> = ({ href, children }) => {
     <Link
       href={href}
       sx={{
-        ...visuallyHiddenSx,
-        ...focusVisibleSx,
+        position: 'absolute',
+        width: '1px',
+        height: '1px',
+        padding: 0,
+        margin: '-1px',
+        overflow: 'hidden',
+        clip: 'rect(0, 0, 0, 0)',
+        whiteSpace: 'nowrap',
+        border: 0,
         '&:focus': {
           position: 'absolute',
           top: 0,
@@ -29,6 +35,11 @@ const SkipLink: React.FC<SkipLinkProps> = ({ href, children }) => {
           color: 'primary.contrastText',
           textDecoration: 'none',
           zIndex: 9999,
+        },
+        '&:focus-visible': {
+          outline: '2px solid',
+          outlineColor: 'primary.main',
+          outlineOffset: '2px',
         },
       }}
     >

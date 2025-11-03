@@ -299,14 +299,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         </Box>
       </Paper>
 
-      <input
+      <Box 
+        component="input"
         ref={fileInputRef}
         type="file"
         multiple
         accept="image/*"
         aria-label={t('imageUpload.selectFiles')}
         sx={{ display: 'none' }}
-        onChange={(e) => handleFileSelect(e.target.files)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e.target.files)}
       />
 
       {/* Images Grid */}
